@@ -8,6 +8,7 @@ export function reqDetail(params: DetailParams): Promise<DetailResponse> {
 interface DetailParams {
   web_id: number
   kind: Kind
+  page: number
   condition?: {
     url?: string
     time?: string
@@ -27,10 +28,12 @@ interface DetailParams {
   }
 }
 interface DetailResponse extends CommonResponse {
-  total: number
-  size: number
-  page: number
-  logs: Array<ErrLog | PreLog | BehLog | HTTPLog>
+  data: {
+    total: number
+    size: number
+    page: number
+    logs: Array<ErrLog | PreLog | BehLog | HTTPLog>
+  }
 }
 
 // 查询用户地区分布
@@ -41,7 +44,9 @@ interface AreaParams {
   web_id: number
 }
 interface AreaResponse extends CommonResponse {
-  area: number[]
+  data: {
+    area: number[]
+  }
 }
 
 // 查询浏览器类型概率分布
@@ -52,10 +57,12 @@ interface BrowserParams {
   web_id: number
 }
 interface BrowserResponse extends CommonResponse {
-  browser: number[]
+  data: {
+    browser: number[]
+  }
 }
 
-// 查询浏览器类型概率分布
+// 查询所有数据
 export function reqAll(params: AllParams): Promise<AllResponse> {
   return ajax.post('/logs/all', params)
 }
@@ -63,17 +70,19 @@ interface AllParams {
   web_id: number
 }
 interface AllResponse extends CommonResponse {
-  err: number[][]
-  pre: number[][]
-  user1: number[][]
-  user2: number[][]
-  http1: number[][]
-  http2: number[][]
-  browser: number[]
-  area: number[]
+  data: {
+    err: number[][]
+    pre: number[][]
+    user1: number[][]
+    user2: number[][]
+    http1: number[][]
+    http2: number[][]
+    browser: number[]
+    area: number[]
+  }
 }
 
-// 查询浏览器类型概率分布
+// 查询日志统计信息
 export function reqStat(params: StatParams): Promise<StatResponse> {
   return ajax.post('/logs/stat', params)
 }

@@ -6,11 +6,13 @@ export function reqWebList(): Promise<ListResponse> {
   return ajax.get('/web/list')
 }
 interface ListResponse extends CommonResponse {
-  web_list: {
-    web_id: number
-    url: string
-    title: string
-    warn_list: string[]
+  data: {
+    web_list: {
+      web_id: number
+      url: string
+      title: string
+      warn_list: string[] // 目前还是空数组
+    }[]
   }
 }
 
@@ -23,11 +25,12 @@ interface AddParams {
   title: string
 }
 interface AddResponse extends CommonResponse {
-  web_list: {
-    web_id: number
-    url: string
-    title: string
-    warn_list: string[]
+  data: {
+    web_list: {
+      web_id: number
+      url: string
+      title: string
+    }
   }
 }
 
@@ -45,7 +48,9 @@ type EditResponse = CommonResponse
 
 // 删除网站
 export function reqDeleteWeb(params: DeleteParams): Promise<DeleteResponse> {
-  return ajax.put('/web/delete', params)
+  return ajax.delete('/web/delete', {
+    data: params,
+  })
 }
 interface DeleteParams {
   web_id: number

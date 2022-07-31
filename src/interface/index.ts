@@ -7,28 +7,28 @@ export interface CommonResponse {
 export interface Log {
   log_id: number
   kind: Kind
-  time: number
-  url: string
+  time: number // 开始时间
+  url: string // 页面路径
 }
 // 异常日志
 export interface ErrLog extends Log {
   type: Type
-  message: string
-  stack: string
-  selector: string
+  message: string // 异常信息
+  stack: string // 触发异常的行为
+  selector: string // 触发异常的元素
 }
 // 性能日志
 export interface PreLog extends Log {
-  dns: number
-  fp: number
-  fcp: number
-  lcp: number
-  dcl: number
-  l: number
+  dns: number // DNS解析
+  fp: number // 首屏渲染
+  fcp: number // 内容渲染
+  lcp: number // 最大内容渲染
+  dcl: number // dom 完全渲染
+  l: number // onload
 }
 // 行为日志
 export interface BehLog extends Log {
-  duration: number
+  duration: number // 停留时间
   ip: string
   area: Area
 }
@@ -38,7 +38,7 @@ export interface HTTPLog extends Log {
   send_url: string
   way: string
   success: boolean
-  status: number
+  status: number // 状态码
   req_header: string
   req_params: string
   res_header: string
