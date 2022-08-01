@@ -47,9 +47,9 @@ for (let i = 0; i < 25; i++) {
     way: 'get',
     success: true,
     status: 200,
-    req_header: '长字符串',
-    req_params: '长字符串',
-    res_header: '长字符串',
+    // req_header: '长字符串',
+    // req_params: '长字符串',
+    // res_header: '长字符串',
     res_body: '长字符串',
   })
 }

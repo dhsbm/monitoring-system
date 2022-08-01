@@ -14,9 +14,11 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "pages/*": ["src/pages/*"],
       "components/*": ["src/components/*"],
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["element-plus/global"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

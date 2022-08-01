@@ -31,6 +31,7 @@ export interface BehLog extends Log {
   duration: number // 停留时间
   ip: string
   area: Area
+  // brower:Browser
 }
 // 请求日志
 export interface HTTPLog extends Log {
@@ -39,9 +40,9 @@ export interface HTTPLog extends Log {
   way: string
   success: boolean
   status: number // 状态码
-  req_header: string
-  req_params: string
-  res_header: string
+  // req_header: string
+  // req_params: string
+  // res_header: string
   res_body: string
 }
 

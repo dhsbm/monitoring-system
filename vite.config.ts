@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      pages: resolve(__dirname, 'src/pages'),
       components: resolve(__dirname, 'src/components'), // 组件路径别名
       '@': resolve(__dirname, 'src'), // 根路径别名
     },
