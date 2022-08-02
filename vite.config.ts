@@ -12,4 +12,11 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'), // 根路径别名
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "./src/assets/style/var.scss";',
+      },
+    },
+  },
 })
