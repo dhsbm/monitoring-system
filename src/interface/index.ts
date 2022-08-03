@@ -6,7 +6,7 @@ export interface CommonResponse {
 // 通用日志信息
 export interface Log {
   log_id: number
-  kind: Kind
+  kind?: Kind
   time: number // 开始时间
   url: string // 页面路径
 }
@@ -18,7 +18,7 @@ export interface ErrLog extends Log {
   selector: string // 触发异常的元素
 }
 // 性能日志
-export interface PreLog extends Log {
+export interface PerLog extends Log {
   dns: number // DNS解析
   fp: number // 首屏渲染
   fcp: number // 内容渲染

@@ -1,40 +1,5 @@
 import { ajax } from '.'
-import { CommonResponse, Kind, Time, ErrLog, PreLog, BehLog, HTTPLog } from '@/interface'
-
-// 查询日志完整信息
-export function reqDetail(params: DetailParams): Promise<DetailResponse> {
-  return ajax.post('/logs/detail', params)
-}
-interface DetailParams {
-  web_id: number
-  kind: Kind
-  page: number
-  condition?: {
-    url?: string
-    time?: string
-    type?: string
-    message?: string
-    dns?: string
-    fp?: string
-    fcp?: string
-    lcp?: string
-    dcl?: string
-    l?: string
-    duration?: string
-    res_time?: string
-    success?: boolean
-    send_url?: string
-    status?: number
-  }
-}
-interface DetailResponse extends CommonResponse {
-  data: {
-    total: number
-    size: number
-    page: number
-    logs: Array<ErrLog | PreLog | BehLog | HTTPLog>
-  }
-}
+import { CommonResponse, Kind, Time, ErrLog, PerLog, BehLog, HTTPLog } from '@/interface'
 
 // 查询用户地区分布
 export function reqArea(params: AreaParams): Promise<AreaResponse> {
@@ -94,4 +59,98 @@ interface StatParams {
 }
 interface StatResponse extends CommonResponse {
   data: number[][]
+}
+
+// 请求错误日志
+export function reqErr(params: ErrParams): Promise<ErrResponse> {
+  return ajax.post('/logs/err', params)
+}
+interface ErrParams {
+  web_id: number
+  page: number
+  condition?: {
+    url?: string
+    time?: string
+    type?: string
+    message?: string
+  }
+}
+interface ErrResponse extends CommonResponse {
+  data: {
+    total: number
+    size: number
+    page: number
+    logs: Array<ErrLog>
+  }
+}
+// 请求性能日志
+export function reqPer(params: PerParams): Promise<PerResponse> {
+  return ajax.post('/logs/per', params)
+}
+interface PerParams {
+  web_id: number
+  page: number
+  condition?: {
+    url?: string
+    time?: string
+    dns?: string
+    fp?: string
+    fcp?: string
+    lcp?: string
+    dcl?: string
+    l?: string
+  }
+}
+interface PerResponse extends CommonResponse {
+  data: {
+    total: number
+    size: number
+    page: number
+    logs: Array<PerLog>
+  }
+}
+// 请求行为日志
+export function reqBeh(params: BehParams): Promise<BehResponse> {
+  return ajax.post('/logs/beh', params)
+}
+interface BehParams {
+  web_id: number
+  page: number
+  condition?: {
+    url?: string
+    time?: string
+    duration?: string
+    ip?: string
+  }
+}
+interface BehResponse extends CommonResponse {
+  data: {
+    total: number
+    size: number
+    page: number
+    logs: Array<BehLog>
+  }
+}
+// 请求网络日志
+export function reqHttp(params: HttpParams): Promise<HttpResponse> {
+  return ajax.post('/logs/http', params)
+}
+interface HttpParams {
+  web_id: number
+  page: number
+  condition?: {
+    url?: string
+    time?: string
+    res_time?: string
+    success?: boolean
+    send_url?: string
+  }
+}
+interface HttpResponse extends CommonResponse {
+  data: {
+    total: number
+    size: number
+    page: number
+    logs: Array<HTTPLog>
+  }
 }
