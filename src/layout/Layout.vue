@@ -16,4 +16,12 @@ import Headers from './headers/Headers.vue'
 .el-main {
   padding: 0;
 }
+.el-header {
+  z-index: 999;
+  height: 50px;
+  box-shadow: 0px 7px 7px -10px #5e5e5e;
+}
+.el-main {
+  background: $bg_color;
+}
 </style>

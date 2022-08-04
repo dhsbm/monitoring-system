@@ -17,7 +17,7 @@
 <style lang="scss" scoped>
 .headers {
   display: flex;
-  background-color: #eee;
+  background-color: rgb(255, 255, 255);
   div {
     height: 50px;
     padding: 0 20px;
