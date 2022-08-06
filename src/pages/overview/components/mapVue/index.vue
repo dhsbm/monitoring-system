@@ -2,7 +2,7 @@
   <div id="main"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import chinaJSON from '@/assets/json/china.json'
 import { onMounted } from 'vue'
 import * as echarts from 'echarts'
@@ -200,7 +200,7 @@ var data = [
   { name: '大庆', value: 279 },
 ]
 
-var geoCoordMap = {
+var geoCoordMap: any = {
   海门: [121.15, 31.89],
   鄂尔多斯: [109.781327, 39.608266],
   招远: [120.38, 37.35],
@@ -393,7 +393,7 @@ var geoCoordMap = {
   大庆: [125.03, 46.58],
 }
 
-var convertData = function (data) {
+var convertData = function (data: any) {
   var res = []
   for (var i = 0; i < data.length; i++) {
     var geoCoord = geoCoordMap[data[i].name]
@@ -408,9 +408,9 @@ var convertData = function (data) {
 }
 
 onMounted(() => {
-  let myChart = echarts.init(document.getElementById('main'))
+  let myChart = echarts.init(document.getElementById('main')!)
   myChart.showLoading()
-  echarts.registerMap('China', chinaJSON)
+  echarts.registerMap('China', chinaJSON as any)
   myChart.setOption(options)
   myChart.hideLoading()
 })
@@ -455,7 +455,7 @@ let options = {
       type: 'scatter',
       coordinateSystem: 'geo',
       data: convertData(data),
-      symbolSize: function (val) {
+      symbolSize: function (val: any) {
         return val[2] / 10
       },
       label: {

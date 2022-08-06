@@ -2,7 +2,7 @@
   <div ref="pieChart" style="width: 50rem; height: 30rem"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import * as echarts from 'echarts'
 import { defineProps, toRef, watch, ref } from 'vue'
 import GetSeries from './GetSeries.js'

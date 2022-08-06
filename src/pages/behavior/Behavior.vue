@@ -1,8 +1,13 @@
 <template>
   <div>
-    <Search ref="se" v-model:url="curReqCondition.url" @myclick="searchData"/>
+    <Search ref="se" v-model:url="curReqCondition.url" @myclick="searchData" />
     <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
-      <el-select v-model="curWebId" class="m-2" placeholder="Select" style="float: left; width: 150px">
+      <el-select
+        v-model="curWebId"
+        class="m-2"
+        placeholder="Select"
+        style="float: left; width: 150px"
+      >
         <el-option v-for="item in WebIdOption" :key="item" :value="item" />
       </el-select>
       <el-input style="width: 200px; margin-left: 20px" v-model="curIp" placeholder="ip查询" />
@@ -18,7 +23,7 @@
         end-placeholder="结束日期"
       />
     </div>
-    <div  class="errorList">
+    <div class="errorList">
       <el-table :data="behData" style="width: 100%; text-align: left">
         <el-table-column fixed prop="log_id" label="日志编号" width="80" />
         <el-table-column prop="time" label="时间" width="150" />
@@ -86,7 +91,7 @@ const searchData = () => {
 }
 const reqBehData = (page: number) => {
   reqBeh({
-    web_id: curWebId.value,
+    webId: curWebId.value,
     page: page,
     condition: curReqCondition,
   }).then((res) => {
@@ -104,9 +109,7 @@ const reqBehData = (page: number) => {
 } //请求数据
 reqBehData(1)
 getWebOption()
-onMounted(() => {
-
-})
+onMounted(() => {})
 watch(dateSelect, (newVal) => {
   let startTime = new Date(newVal[0]).getTime()
   let endTime = new Date(newVal[1]).getTime()
@@ -124,9 +127,6 @@ watch(curIp, (newVal) => {
   curReqCondition._rawValue.ip = newVal
   searchData()
 })
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

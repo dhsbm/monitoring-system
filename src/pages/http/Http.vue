@@ -1,16 +1,21 @@
 <template>
   <div>
-    <Search v-model:url="curReqCondition.url" @myclick="searchData"/><!-- 搜索框 -->
+    <Search v-model:url="curReqCondition.url" @myclick="searchData" /><!-- 搜索框 -->
     <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
-      <el-select v-model="curWebId" class="m-2" placeholder="Select" style="float: left; width: 150px">
-        <el-option v-for="item in WebIdOption" :key="item" :value="item" />
-      </el-select><!-- 网站id选择 -->
+      <el-select
+        v-model="curWebId"
+        class="m-2"
+        placeholder="Select"
+        style="float: left; width: 150px"
+      >
+        <el-option v-for="item in WebIdOption" :key="item" :value="item" /> </el-select
+      ><!-- 网站id选择 -->
       <el-select
         v-model="curSuccess"
         class="m-2"
         placeholder="Select"
         style="float: left; margin-left: 10px; width: 120px"
-      ><!-- 状态选择 -->
+        ><!-- 状态选择 -->
         <el-option v-for="item in successOption" :key="item" :value="item" />
       </el-select>
       <el-date-picker
@@ -25,7 +30,7 @@
         end-placeholder="结束日期"
       /><!-- 时间选择 -->
     </div>
-    <div style=" text-align: center" class="errorList">
+    <div style="text-align: center" class="errorList">
       <el-table :data="httpData" style="width: 100%; text-align: left">
         <el-table-column fixed prop="log_id" label="日志编号" width="80" />
         <el-table-column prop="time" label="时间" width="150" />
@@ -37,7 +42,8 @@
         <el-table-column prop="way" label="方式" width="100" />
         <el-table-column prop="res_body" label="返回" />
       </el-table>
-    </div> <!-- 数据显示 -->
+    </div>
+    <!-- 数据显示 -->
     <div class="demo-pagination-block">
       <el-pagination
         v-model:currentPage="currentPage1"
@@ -51,7 +57,7 @@
         @current-change="handleCurrentChange"
       /><!-- 分页 -->
     </div>
-    
+
     ><!-- 筛选列表 -->
   </div>
 </template>
@@ -74,14 +80,14 @@ let curWebId = ref() //当前网站ID
 let httpData = ref()
 let curReqOption = ref() //当前选择的查询条件
 let successOption = ['成功/失败', '成功', '失败']
-let stateList = ['全部','200','300','400','500']
+let stateList = ['全部', '200', '300', '400', '500']
 let showSet = ref(false)
 let curReqCondition = ref({
   url: '',
   time: '',
-  success:'',
-  res_time:'',
-  send_url:''
+  success: '',
+  res_time: '',
+  send_url: '',
 }) as any //当前选择的查询条件
 curWebId.value = 1 //初始化当前网站id
 curSuccess.value = '成功/失败' //默认错误类型
@@ -104,9 +110,9 @@ const searchData = () => {
 }
 const reqHttpData = (page: number) => {
   reqHttp({
-    web_id: curWebId.value,
+    webId: curWebId.value,
     page: page,
-    condition:curReqCondition
+    condition: curReqCondition,
   }).then((res) => {
     httpData.value = res.data.logs
     length1.value = res.data.total
@@ -137,16 +143,20 @@ watch(curWebId, () => {
 })
 watch(curSuccess, (newVal) => {
   console.log(newVal)
-  switch(newVal){
-      case '成功':curReqCondition._rawValue.success = true;break;
-      case '成功/失败':curReqCondition._rawValue.success = '';break;
-      case '失败':curReqCondition._rawValue.success = false;break;
+  switch (newVal) {
+    case '成功':
+      curReqCondition._rawValue.success = true
+      break
+    case '成功/失败':
+      curReqCondition._rawValue.success = ''
+      break
+    case '失败':
+      curReqCondition._rawValue.success = false
+      break
   }
-   currentPage1.value = 1
+  currentPage1.value = 1
   reqHttpData(currentPage1.value)
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

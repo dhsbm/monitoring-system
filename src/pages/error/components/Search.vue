@@ -3,7 +3,7 @@
     <div class="search bar1">
       <h1 style="font-size: 20px; margin-bottom: 20px">错误信息</h1>
       <form>
-        <input type="text" v-model="url" placeholder="请输入您要搜索的异常信息..." />
+        <input type="text" v-model="v" placeholder="请输入您要搜索的异常信息..." />
         <button type="submit" @click="emit('myclick')"></button>
       </form>
     </div>
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { watch, ref, defineProps, defineEmits } from 'vue'
-const props = defineProps<{ url }>()
+const props = defineProps<{ url: any }>()
 const v = ref(props.url)
 watch(
   () => props.url,
@@ -20,7 +20,7 @@ watch(
     emit('update:url', value)
   }
 )
-const emit = defineEmits(['update:url','myclick'])
+const emit = defineEmits(['update:url', 'myclick'])
 </script>
 
 <style lang="scss" scoped>

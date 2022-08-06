@@ -25,11 +25,12 @@
     </el-table>
     <el-button
       type="primary"
-      @click="emit('myclick')"
       style="background-image: none; height: 30px; width: 50px; float: right"
-      >筛选</el-button
+      @click="emit('myclick')"
     >
-    <span> &nbsp</span>
+      筛选
+    </el-button>
+    <span> &nbsp;</span>
   </div>
 </template>
 
@@ -37,17 +38,17 @@
 import { watch, ref, defineProps, defineEmits } from 'vue'
 
 let selectCondition = ref({
-    url:'',
-  time:'',
-  dns:'',
-  fp:'',
-  fcp:'',
-  lcp:'',
-  dcl:'',
-  l:''
+  url: '',
+  time: '',
+  dns: '',
+  fp: '',
+  fcp: '',
+  lcp: '',
+  dcl: '',
+  l: '',
 }) as any
 const props = defineProps<{
-  condition
+  condition: any
 }>()
 
 const emit = defineEmits(['update:condition', 'myclick'])
@@ -84,27 +85,24 @@ const tableData = ref([
     max: '',
   },
 ])
-const updata = (item) => {
-    
-    
+const updata = (item: any) => {
   selectCondition._rawValue.dns = item[0].min + '_' + item[0].max
   selectCondition._rawValue.fp = item[1].min + '_' + item[1].max
   selectCondition._rawValue.fcp = item[2].min + '_' + item[2].max
   selectCondition._rawValue.lcp = item[3].min + '_' + item[3].max
   selectCondition._rawValue.dcl = item[4].min + '_' + item[4].max
   selectCondition._rawValue.l = item[5].min + '_' + item[5].max
-  console.log( selectCondition);
+  console.log(selectCondition)
 }
 watch(
   () => tableData,
   (newValue: any) => {
     //console.log(newValue);
-    
+
     updata(newValue._rawValue)
     emit('update:condition', selectCondition)
   },
   { deep: true, immediate: true }
 )
 </script>
-<style scoped>
-</style>
+<style scoped></style>

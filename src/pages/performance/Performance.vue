@@ -2,7 +2,12 @@
   <div>
     <Search v-model:url="curReqCondition.url" @myclick="searchData" /><!-- 搜索框 -->
     <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
-      <el-select v-model="curWebId" class="m-2" placeholder="Select" style="float: left; width: 150px">
+      <el-select
+        v-model="curWebId"
+        class="m-2"
+        placeholder="Select"
+        style="float: left; width: 150px"
+      >
         <el-option v-for="item in WebIdOption" :key="item" :value="item" /> </el-select
       ><!-- 网站id选择 -->
 
@@ -47,9 +52,16 @@
       />
     </div>
     <!-- 分页 -->
-    <el-dialog title="筛选规则" v-model="showSet" :before-close="setClose" style="text-align: center">
-      <select-list v-model:condition="curReqCondition" @myclick="searchData"></select-list>
-    </el-dialog
+    <el-dialog
+      title="筛选规则"
+      v-model="showSet"
+      :before-close="setClose"
+      style="text-align: center"
+    >
+      <select-list
+        v-model:condition="curReqCondition"
+        @myclick="searchData"
+      ></select-list> </el-dialog
     ><!-- 筛选列表 -->
   </div>
 </template>
@@ -75,7 +87,7 @@ let showSet = ref(false)
 let curReqCondition = ref({
   url: '',
   time: '',
-  dns:'',
+  dns: '',
   fp: '',
   fcp: '',
   lcp: '',
@@ -92,7 +104,7 @@ const handleCurrentChange = (val: number) => {
   reqPerData(val)
 } //改变页数
 const searchData = () => {
-  showSet.value=false
+  showSet.value = false
   currentPage1.value = 1
   reqPerData(1)
 }
@@ -107,9 +119,9 @@ const showSelectFrom = () => {
 } //显示性能指标筛选
 const reqPerData = (page: number) => {
   reqPer({
-    web_id: curWebId.value,
+    webId: curWebId.value,
     page: page,
-    condition:curReqCondition.value
+    condition: curReqCondition.value,
   }).then((res) => {
     console.log(res)
     perData.value = res.data.logs
@@ -140,11 +152,9 @@ watch(curWebId, () => {
   reqPerData(currentPage1.value)
 })
 //当前网站id监听  变化后更新数据
-
 </script>
 
 <style lang="scss" scoped>
-
 .set {
   display: inline-block;
   width: 30px;

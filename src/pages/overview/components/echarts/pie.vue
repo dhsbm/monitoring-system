@@ -2,7 +2,7 @@
   <div ref="pieChart" style="width: 30rem; height: 30rem"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import * as echarts from 'echarts'
 import { defineProps, toRef, watch, ref } from 'vue'
 
@@ -14,10 +14,10 @@ const props = defineProps({
 })
 let data = toRef(props, 'data')
 
-function getData(data, item) {
+function getData(data: any, item: any) {
   let ans = []
   for (let i = 0; i < item.length; i++) {
-    let t = {}
+    const t: any = {}
     t.value = data[i]
     t.name = item[i]
     ans.push(t)
@@ -28,7 +28,7 @@ console.log(props.titleOption)
 watch(
   () => data,
   () => {
-    if (data.value.length) {
+    if (data.value?.length) {
       let pieData = getData(props.data, props.item)
       console.log(pieData)
       let myChart = echarts.init(pieChart.value)

@@ -61,13 +61,13 @@
             :title-option="`异常数据表`"
             :x-axis-option="xAxis_err"
             :y-axis-option="yAxis_err"
-            :data="err_data"
+            :data="errData"
           ></LineVue>
           <LineVue
             :title-option="`网页性能表`"
             :x-axis-option="xAxis_per"
             :y-axis-option="yAxis_per"
-            :data="per_data"
+            :data="perData"
           ></LineVue>
         </div>
         <div class="line_2">
@@ -75,13 +75,13 @@
             :title-option="`请求数图表`"
             :x-axis-option="xAxis_err"
             :y-axis-option="yAxis_http1"
-            :data="http1_data"
+            :data="http1Data"
           ></LineVue>
           <LineVue
             :title-option="`请求时间表`"
             :x-axis-option="xAxis_err"
             :y-axis-option="yAxis_http2"
-            :data="http2_data"
+            :data="http2Data"
           ></LineVue>
         </div>
       </div>
@@ -95,29 +95,29 @@
     <div class="userData">
       <span class="title">用户相关</span>
       <div class="userData-line">
-        <pieVue :title-option="`用户浏览器类型`" :item="browser_item" :data="browser_data"></pieVue>
+        <pieVue :title-option="`用户浏览器类型`" :item="browser_item" :data="browserData"></pieVue>
         <LineVue
           :title-option="`用户停留时间`"
           :x-axis-option="xAxis_err"
           :y-axis-option="yAxis_user2"
-          :data="user2_data"
+          :data="user2Data"
         ></LineVue>
         <LineVue
           :title-option="`用户访问量`"
           :x-axis-option="xAxis_err"
           :y-axis-option="yAxis_user1"
-          :data="user1_data"
+          :data="user1Data"
         ></LineVue>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import mapVue from '@/components/mapVue/index.vue'
-import process from '@/components/progress/index.vue'
-import LineVue from '@/components/echarts/line.vue'
-import pieVue from '@/components//echarts/pie.vue'
+<script setup lang="ts">
+import mapVue from './components/mapVue/index.vue'
+import process from './components/progress/index.vue'
+import LineVue from './components/echarts/line.vue'
+import pieVue from './components//echarts/pie.vue'
 import { reqAll } from '@/api/index'
 //请求数据
 import { ref } from 'vue'
@@ -131,26 +131,28 @@ let yAxis_http1 = ['成功请求数', '失败请求数']
 let yAxis_http2 = ['响应时间']
 let browser_item = ['性能1', '性能2', '性能3', '性能4', '性能5', '性能6']
 
-let err_data = ref([])
-let per_data = ref([])
-let user1_data = ref([])
-let user2_data = ref([])
-let http1_data = ref([])
-let http2_data = ref([])
-let browser_data = ref([])
-let area_data = ref([])
+let errData: any = ref([])
+let perData: any = ref([])
+let user1Data: any = ref([])
+let user2Data: any = ref([])
+let http1Data: any = ref([])
+let http2Data: any = ref([])
+let browserData: any = ref([])
+let areaData: any = ref([])
 
-reqAll(1).then((data) => {
-  let { err, browser, area, http1, http2, pre, user1, user2 } = data.data
-  err_data.value = err
-  per_data.value = pre
-  user1_data.value = user1
-  user2_data.value = user2
-  http1_data.value = http1
-  http2_data.value = http2
-  browser_data.value = browser
-  area_data.value = area
-  console.log(area)
+reqAll({
+  webId: 1,
+}).then((data) => {
+  let { err, browser, area, http1, http2, per, user1, user2 } = data.data
+  errData.value = err
+  perData.value = per
+  user1Data.value = user1
+  user2Data.value = user2
+  http1Data.value = http1
+  http2Data.value = http2
+  browserData.value = browser
+  areaData.value = area
+  // console.log(area)
 })
 </script>
 
