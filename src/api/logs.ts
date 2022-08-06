@@ -6,7 +6,7 @@ export function reqArea(params: AreaParams): Promise<AreaResponse> {
   return ajax.post('/logs/area', params)
 }
 interface AreaParams {
-  web_id: number
+  webId: number
 }
 interface AreaResponse extends CommonResponse {
   data: {
@@ -19,7 +19,7 @@ export function reqBrowser(params: BrowserParams): Promise<BrowserResponse> {
   return ajax.post('/logs/browser', params)
 }
 interface BrowserParams {
-  web_id: number
+  webId: number
 }
 interface BrowserResponse extends CommonResponse {
   data: {
@@ -32,7 +32,7 @@ export function reqAll(params: AllParams): Promise<AllResponse> {
   return ajax.post('/logs/all', params)
 }
 interface AllParams {
-  web_id: number
+  webId: number
 }
 interface AllResponse extends CommonResponse {
   data: {
@@ -52,7 +52,7 @@ export function reqStat(params: StatParams): Promise<StatResponse> {
   return ajax.post('/logs/stat', params)
 }
 interface StatParams {
-  web_id: number
+  webId: number
   kind: Kind
   time: Time
   index?: number // 区分行为日志和请求日志的两个表
@@ -66,7 +66,7 @@ export function reqErr(params: ErrParams): Promise<ErrResponse> {
   return ajax.post('/logs/err', params)
 }
 interface ErrParams {
-  web_id: number
+  webId: number
   page: number
   condition?: {
     url?: string
@@ -88,7 +88,7 @@ export function reqPer(params: PerParams): Promise<PerResponse> {
   return ajax.post('/logs/per', params)
 }
 interface PerParams {
-  web_id: number
+  webId: number
   page: number
   condition?: {
     url?: string
@@ -114,7 +114,7 @@ export function reqBeh(params: BehParams): Promise<BehResponse> {
   return ajax.post('/logs/beh', params)
 }
 interface BehParams {
-  web_id: number
+  webId: number
   page: number
   condition?: {
     url?: string
@@ -136,7 +136,7 @@ export function reqHttp(params: HttpParams): Promise<HttpResponse> {
   return ajax.post('/logs/http', params)
 }
 interface HttpParams {
-  web_id: number
+  webId: number
   page: number
   condition?: {
     url?: string

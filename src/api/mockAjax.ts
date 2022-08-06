@@ -20,8 +20,7 @@ ajax.interceptors.request.use(
     if (token) {
       config.headers!['Authorization'] = 'Bearer ' + token
     }
-    config.data = decamelizeKeys(config.data)//将请求数据转为snake_case
-    console.log(config)
+    config.data = decamelizeKeys(config.data) //将请求数据转为snake_case
     return config
   },
   (error) => {
@@ -33,7 +32,7 @@ ajax.interceptors.request.use(
 ajax.interceptors.response.use(
   (response) => {
     NProgress.done() // 隐藏进度条
-    response.data = camelizeKeys(response.data)//将响应数据转为camelCase
+    response.data = camelizeKeys(response.data) //将响应数据转为camelCase
     return response.data // 取data
   },
   (error) => {

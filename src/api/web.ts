@@ -11,7 +11,7 @@ interface ListResponse extends CommonResponse {
       webId: number
       url: string
       title: string
-      warnList: string[] // 目前还是空数组
+      warn: string
     }[]
   }
 }
@@ -42,7 +42,7 @@ interface EditParams {
   webId: number
   url?: string
   title?: string
-  warnList?: string[]
+  warn?: string
 }
 type EditResponse = CommonResponse
 

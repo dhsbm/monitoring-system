@@ -3,7 +3,7 @@ import { CommonResponse } from '@/interface'
 
 interface UserResponse extends CommonResponse {
   data: {
-    user_id: number
+    userId: number
     name: string
     token: string
   }

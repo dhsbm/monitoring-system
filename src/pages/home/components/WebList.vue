@@ -3,12 +3,16 @@ import { WebInfo } from '@/interface'
 import { onMounted } from 'vue'
 import WebItem from './WebItem.vue'
 import { reqWebList } from '@/api'
+import { useWebStore } from '@/store'
 
 let webList = $ref<WebInfo[]>()
 
 onMounted(async () => {
   const { data } = await reqWebList()
   webList = data.webList
+  const webStore = useWebStore()
+  webStore.webList = data.webList
+  webStore.webId = data.webList[0].webId
 })
 </script>
 

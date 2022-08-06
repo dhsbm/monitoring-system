@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { WebInfo } from '@/interface'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { reqDeleteWeb } from '@/api/web.js'
 
