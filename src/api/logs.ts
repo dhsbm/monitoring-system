@@ -72,7 +72,7 @@ interface AllParams {
 interface AllResponse extends CommonResponse {
   data: {
     err: number[][]
-    pre: number[][]
+    per: number[][]
     user1: number[][]
     user2: number[][]
     http1: number[][]

@@ -52,8 +52,8 @@ const addWeb = () => {
         class="mt-4 p-2 border border-solid border-slate-600 rounded-lg"
       />
       <div class="flex flex-row justify-end mt-7">
-        <button class="btn bg-slate-700 text-white hover:bg-slate-800 m-1" @click="addWeb">确定</button>
         <button class="btn bg-slate-400 text-slate-700 hover:bg-slate-500 m-1" @click="isShow = false">取消</button>
+        <button class="btn bg-slate-700 text-white hover:bg-slate-800 m-1" @click="addWeb">确定</button>
       </div>
     </div>
   </ModalWrapper>

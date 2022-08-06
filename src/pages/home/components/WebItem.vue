@@ -1,20 +1,18 @@
-<!--  -->
-<script setup lang='ts'>
-
-import { WebInfo } from '@/interface';
-import {ref, computed} from 'vue';
-import {ElMessage, ElMessageBox} from 'element-plus'
-import { reqDeleteWeb } from '@/api/web.js';
+<script setup lang="ts">
+import { WebInfo } from '@/interface'
+import { ref, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { reqDeleteWeb } from '@/api/web.js'
 
 const props = defineProps<{
   webInfo: WebInfo
 }>()
 
-const score = ref(80)
+const score = ref(59)
 const status = computed(() => {
-  if(score.value >= 90) {
+  if (score.value >= 90) {
     return 'success'
-  } else if (score.value >= 60 ) {
+  } else if (score.value >= 60) {
     return 'warning'
   } else {
     return 'exception'
@@ -34,14 +32,13 @@ const deleteWeb = () => {
     cancelButtonText: '取消',
   })
     .then(({ value }) => {
-      if( value == props.webInfo.title) {
-        reqDeleteWeb({webId: props.webInfo.webId}).then( () => {
+      if (value == props.webInfo.title) {
+        reqDeleteWeb({ webId: props.webInfo.webId }).then(() => {
           ElMessage({
             type: 'success',
             message: `“${value}”已被成功删除`,
           })
-        }
-        )
+        })
       } else {
         ElMessage({
           type: 'warning',
@@ -56,7 +53,6 @@ const deleteWeb = () => {
       })
     })
 }
-
 </script>
 
 <template>
@@ -104,4 +100,3 @@ const deleteWeb = () => {
     </div>
   </div>
 </template>
-

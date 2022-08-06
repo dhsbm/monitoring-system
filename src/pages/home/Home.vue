@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 min-h-screen p-5">
+  <div class="p-5">
     <button class="bg-slate-300 text-slate-700 hover:bg-slate-400 btn" @click="modalAddWeb.show()">添加网站</button>
     <WebList class="mt-5" />
     <ModalAddWeb ref="modalAddWeb" />
@@ -12,3 +12,9 @@ import ModalAddWeb from './components/ModalAddWeb.vue'
 
 const modalAddWeb: any = $ref<InstanceType<typeof ModalAddWeb>>()
 </script>
+
+<style lang="scss" scoped>
+.p-5 {
+  box-sizing: border-box;
+}
+</style>

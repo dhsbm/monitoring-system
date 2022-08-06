@@ -12,6 +12,9 @@ import Headers from './headers/Headers.vue'
 </script>
 
 <style lang="scss" scoped>
+.el-header {
+  height: 50px;
+}
 .el-header,
 .el-main {
   padding: 0;
@@ -21,5 +24,4 @@ import Headers from './headers/Headers.vue'
     display: none;
     overflow-y: hidden;
 } */
-
 </style>
