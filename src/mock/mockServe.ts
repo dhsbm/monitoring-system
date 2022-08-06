@@ -45,15 +45,33 @@ Mock.mock('/mock/web/list', 'get', {
   data: {
     web_list: [
       {
-        web_id: 0,
+        web_id: 1,
+        url: 'localhost',
+        title: '测试网站1',
+        warn_list: [],
+      },
+      {
+        web_id: 2,
+        url: 'localhost',
+        title: '测试网站2',
+        warn_list: [],
+      },
+      {
+        web_id: 3,
         url: 'www.baidu.com',
         title: '百度',
         warn_list: [],
       },
       {
-        web_id: 1,
+        web_id: 4,
         url: 'www.taobao.com',
         title: '淘宝',
+        warn_list: [],
+      },
+      {
+        web_id: 5,
+        url: 'www.jd.com',
+        title: '京东',
         warn_list: [],
       },
     ],
@@ -169,7 +187,10 @@ Mock.mock('/mock/logs/all', 'post', {
     ],
     http2: [[87], [87], [87], [87], [87], [87], [87]],
     browser: [49, 120, 20, 0, 0, 0, 0],
-    area: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5],
+    area: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
+      2, 3, 4, 5,
+    ],
   },
 })
 
