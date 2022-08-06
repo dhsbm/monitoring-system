@@ -20,7 +20,7 @@ interface ListResponse extends CommonResponse {
 export function reqAddWeb(params: AddParams): Promise<AddResponse> {
   return ajax.post('/web/add', params)
 }
-interface AddParams {
+export interface AddParams {
   url: string
   title: string
 }
@@ -28,8 +28,6 @@ interface AddResponse extends CommonResponse {
   data: {
     webList: {
       webId: number
-      url: string
-      title: string
     }
   }
 }
@@ -38,11 +36,11 @@ interface AddResponse extends CommonResponse {
 export function reqEditWeb(params: EditParams): Promise<EditResponse> {
   return ajax.put('/web/edit', params)
 }
-interface EditParams {
+export interface EditParams {
   webId: number
-  url?: string
-  title?: string
-  warn?: string
+  url: string
+  title: string
+  warn: string
 }
 type EditResponse = CommonResponse
 

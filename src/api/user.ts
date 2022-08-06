@@ -13,7 +13,7 @@ interface UserResponse extends CommonResponse {
 export function reqLogin(params: LoginParams): Promise<UserResponse> {
   return ajax.post('/user/login', params)
 }
-interface LoginParams {
+export interface LoginParams {
   email: string
   password: string
 }
@@ -22,7 +22,7 @@ interface LoginParams {
 export function reqRegister(params: RegisterParams): Promise<UserResponse> {
   return ajax.post('/user/register', params)
 }
-interface RegisterParams {
+export interface RegisterParams {
   email: string
   password: string
   name: string

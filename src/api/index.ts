@@ -1,6 +1,6 @@
 import mockAjax from './mockAjax'
-import { reqLogin, reqRegister, reqGetInfo } from './user'
-import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb } from './web'
+import { reqLogin, reqRegister, reqGetInfo, LoginParams, RegisterParams } from './user'
+import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb, AddParams, EditParams } from './web'
 import { reqAll, reqStat, reqErr, reqBeh, reqPer, reqHttp } from './logs'
 
 export {
@@ -19,3 +19,5 @@ export {
   reqHttp,
   reqStat,
 }
+
+export type { LoginParams, RegisterParams, AddParams, EditParams }

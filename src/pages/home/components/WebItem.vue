@@ -2,7 +2,8 @@
 import { WebInfo } from '@/interface'
 import { computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { reqDeleteWeb } from '@/api/web.js'
+import { useWebStore } from '@/store'
+import { switchShow } from './modal'
 
 const props = defineProps<{
   webInfo: WebInfo
@@ -29,8 +30,10 @@ const status = computed(() => {
   }
 })
 
+const webStore = useWebStore()
+
 const editWeb = () => {
-  alert('todo')
+  switchShow(true, props.webInfo.title, props.webInfo.url, false, props.webInfo.webId)
 }
 
 const deleteWeb = () => {
@@ -47,10 +50,10 @@ const deleteWeb = () => {
   )
     .then(({ value }) => {
       if (value == props.webInfo.title) {
-        reqDeleteWeb({ webId: props.webInfo.webId }).then(() => {
+        webStore.deleteWeb(props.webInfo.webId).then(() => {
           ElMessage({
+            message: '网站已删除',
             type: 'success',
-            message: `“${value}”已被成功删除`,
           })
         })
       } else {

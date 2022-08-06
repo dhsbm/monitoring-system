@@ -38,65 +38,81 @@ Mock.mock('/mock/user/info', 'get', {
   },
 })
 
+const web_list = [
+  {
+    web_id: 1,
+    url: 'localhost',
+    title: '测试网站1',
+    warn_list: [],
+  },
+  {
+    web_id: 2,
+    url: 'localhost',
+    title: '测试网站2',
+    warn_list: [],
+  },
+  {
+    web_id: 3,
+    url: 'www.baidu.com',
+    title: '百度',
+    warn_list: [],
+  },
+  {
+    web_id: 4,
+    url: 'www.taobao.com',
+    title: '淘宝',
+    warn_list: [],
+  },
+  {
+    web_id: 5,
+    url: 'www.jd.com',
+    title: '京东',
+    warn_list: [],
+  },
+]
+
 // 获取网站列表
 Mock.mock('/mock/web/list', 'get', {
   code: 0,
   message: '',
   data: {
-    web_list: [
-      {
-        web_id: 1,
-        url: 'localhost',
-        title: '测试网站1',
-        warn_list: [],
-      },
-      {
-        web_id: 2,
-        url: 'localhost',
-        title: '测试网站2',
-        warn_list: [],
-      },
-      {
-        web_id: 3,
-        url: 'www.baidu.com',
-        title: '百度',
-        warn_list: [],
-      },
-      {
-        web_id: 4,
-        url: 'www.taobao.com',
-        title: '淘宝',
-        warn_list: [],
-      },
-      {
-        web_id: 5,
-        url: 'www.jd.com',
-        title: '京东',
-        warn_list: [],
-      },
-    ],
+    web_list,
   },
 })
 
 // 添加网站
-Mock.mock('/mock/web/add', 'post', {
-  code: 0,
-  message: '',
-  data: {
-    web_id: 2,
-  },
+Mock.mock('/mock/web/add', 'post', () => {
+  web_list.push({
+    web_id: web_list.length + 1,
+    url: 'www.com',
+    title: '新增网站',
+    warn_list: [],
+  })
+  return {
+    code: 0,
+    message: '',
+    data: {
+      web_id: 2,
+    },
+  }
 })
 
 // 修改网站信息
-Mock.mock('/mock/web/edit', 'put', {
-  code: 0,
-  message: '',
+Mock.mock('/mock/web/edit', 'put', () => {
+  web_list[0].title = '我被修改了'
+  return {
+    code: 0,
+    message: '',
+  }
 })
 
 // 修改网站信息
-Mock.mock('/mock/web/delete', 'delete', {
-  code: 0,
-  message: '',
+Mock.mock('/mock/web/delete', 'delete', () => {
+  web_list.pop()
+  return {
+    code: 0,
+    message: '',
+  }
 })
 
 // 查询日志完整信息

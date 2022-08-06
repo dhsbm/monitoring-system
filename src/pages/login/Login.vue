@@ -27,7 +27,10 @@
       <span v-if="!isLogin">已有登录邮箱</span>
       <span v-else>我要注册</span>
     </div>
-    <button class="btn bg-slate-300 text-slate-700 hover:bg-slate-400" @click.prevent="loginOrRegister">
+    <button
+      class="btn bg-slate-300 text-slate-700 hover:bg-slate-400"
+      @click.prevent="loginOrRegister"
+    >
       <span v-if="isLogin">登录</span>
       <span v-else>注册</span>
     </button>
@@ -35,8 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { reqLogin, reqRegister } from '@/api'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import { ElMessage } from 'element-plus'
@@ -50,46 +52,40 @@ let password = $ref('')
 let name = $ref('')
 
 const loginOrRegister = () => {
+  const userStore = useUserStore()
   if (isLogin.value) {
-    reqLogin({
-      email: email,
-      password: password,
-    })
-      .then(({ code, data }) => {
-        email = ''
-        password = ''
-        if (code == 0) {
-          const userStore = useUserStore()
-          userStore.name = data.name
-          userStore.login = true
-          localStorage.setItem('token', data.token)
-          router.push('/home')
-        } else {
-          ElMessage({
-            message: '邮箱或密码错误',
-            type: 'error',
-          })
-        }
+    userStore
+      .login({
+        email: email,
+        password: password,
+      })
+      .then(() => {
+        router.push('/home')
       })
       .catch(() => {
-        console.log('fail')
+        ElMessage({
+          message: '邮箱或密码错误',
+          type: 'error',
+        })
       })
   } else {
-    console.log('register')
-    reqRegister({
-      email: email,
-      name: name,
-      password: password,
-    })
+    userStore
+      .register({
+        email: email,
+        name: name,
+        password: password,
+      })
       .then(() => {
         name = ''
         email = ''
         password = ''
-        console.log('success')
         router.push('/home')
       })
       .catch(() => {
-        console.log('fail')
+        ElMessage({
+          message: '邮箱已注册',
+          type: 'error',
+        })
       })
   }
 }
