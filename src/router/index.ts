@@ -67,7 +67,6 @@ router.beforeEach((to, from, next) => {
         userStore.login = true
         userStore.name = data.name
         localStorage.setItem('token', data.token)
-        router.push('/home')
       } else {
         router.push('/login')
       }

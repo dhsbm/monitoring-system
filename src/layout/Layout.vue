@@ -13,15 +13,12 @@ import Headers from './headers/Headers.vue'
 
 <style lang="scss" scoped>
 .el-header {
+  padding: 0;
   height: 50px;
+  box-shadow: 0px 7px 7px -10px #5e5e5e;
 }
-.el-header,
 .el-main {
+  height: calc(100vh - 50px);
   padding: 0;
 }
-
-/* ::-webkit-scrollbar {
-    display: none;
-    overflow-y: hidden;
-} */
 </style>
