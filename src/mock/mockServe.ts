@@ -1,5 +1,5 @@
 import Mock from 'mockjs'
-import { errLogs, preLogs, behLogs, httpLogs } from './logs'
+import { errLogs, perLogs, behLogs, httpLogs } from './logs'
 interface Option {
   url: string
   type: string
@@ -73,14 +73,13 @@ Mock.mock('/mock/web/delete', 'delete', {
 // 查询日志完整信息
 Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
   const { kind, page } = JSON.parse(option.body)
-
   let logs
   switch (kind) {
     case 0:
       logs = errLogs.slice((page - 1) * 10, page * 10)
       break
     case 1:
-      logs = preLogs.slice((page - 1) * 10, page * 10)
+      logs = perLogs.slice((page - 1) * 10, page * 10)
       break
     case 2:
       logs = behLogs.slice((page - 1) * 10, page * 10)
@@ -129,7 +128,7 @@ Mock.mock('/mock/logs/all', 'post', {
       [100, 1, 2, 3],
       [100, 1, 2, 3],
     ],
-    pre: [
+    per: [
       [38, 73, 79, 38, 11, 23],
       [38, 73, 79, 38, 11, 23],
       [38, 73, 79, 38, 11, 23],
@@ -176,4 +175,56 @@ Mock.mock('/mock/logs/stat', 'post', {
     [38, 56, 68, 34],
     [38, 56, 68, 34],
   ],
+})
+
+// 查询日志完整信息
+Mock.mock('/mock/logs/err', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    data: {
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: errLogs.slice((page - 1) * 10, page * 10),
+    }
+
+  }
+})
+
+Mock.mock('/mock/logs/per', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    data:{
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: perLogs.slice((page - 1) * 10, page * 10),
+    }
+   
+  }
+})
+
+Mock.mock('/mock/logs/beh', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    data:{
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: behLogs.slice((page - 1) * 10, page * 10),
+    }
+   
+  }
+})
+Mock.mock('/mock/logs/http', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    data:{
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: httpLogs.slice((page - 1) * 10, page * 10),
+    }
+   
+  }
 })

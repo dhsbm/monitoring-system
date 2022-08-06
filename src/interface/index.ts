@@ -9,6 +9,8 @@ export interface Log {
   kind: Kind
   time: number // 开始时间
   url: string // 页面路径
+  total:number
+  logs:Array<Object>
 }
 // 异常日志
 export interface ErrLog extends Log {
@@ -18,7 +20,7 @@ export interface ErrLog extends Log {
   selector: string // 触发异常的元素
 }
 // 性能日志
-export interface PreLog extends Log {
+export interface PerLog extends Log {
   dns: number // DNS解析
   fp: number // 首屏渲染
   fcp: number // 内容渲染
@@ -115,4 +117,47 @@ export enum Area {
   澳门 = 32,
   天津 = 33,
   贵州 = 34,
+}
+//Errlogs展示类型
+export interface Logs {
+  log_id: number
+  kind: Kind
+  time: String // 开始时间
+  url: string // 页面路径
+  total:number
+  logs:Array<Object>
+}
+export interface errLogShow extends Logs{
+  type: String
+  message: string // 异常信息
+  stack: string // 触发异常的行为
+  selector: string // 触发异常的元素
+}
+// 性能日志
+export interface PerLogShow extends Logs {
+  dns: number // DNS解析
+  fp: number // 首屏渲染
+  fcp: number // 内容渲染
+  lcp: number // 最大内容渲染
+  dcl: number // dom 完全渲染
+  l: number // onload
+}
+// 行为日志
+export interface BehLogShow extends Logs {
+  duration: number // 停留时间
+  ip: string
+  area: string
+  // brower:Browser
+}
+// 请求日志
+export interface HTTPLogShow extends Logs {
+  res_time: number
+  send_url: string
+  way: string
+  success: boolean
+  status: number // 状态码
+  // req_header: string
+  // req_params: string
+  // res_header: string
+  res_body: string
 }

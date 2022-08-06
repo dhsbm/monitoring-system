@@ -1,7 +1,7 @@
 import mockAjax from './mockAjax'
 import { reqLogin, reqRegister } from './user'
 import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb } from './web'
-import { reqDetail, reqAll, reqArea, reqBrowser, reqStat } from './logs'
+import { reqErr,reqPer,reqBeh, reqHttp,reqAll, reqArea, reqBrowser, reqStat } from './logs'
 
 export {
   mockAjax as ajax,
@@ -11,7 +11,10 @@ export {
   reqAddWeb,
   reqEditWeb,
   reqDeleteWeb,
-  reqDetail,
+  reqErr,
+  reqPer,
+  reqBeh, 
+  reqHttp,
   reqAll,
   reqArea,
   reqBrowser,
