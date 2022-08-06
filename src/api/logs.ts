@@ -1,32 +1,6 @@
 import { ajax } from '.'
 import { CommonResponse, Kind, Time, ErrLog, PerLog, BehLog, HTTPLog } from '@/interface'
 
-// 查询用户地区分布
-export function reqArea(params: AreaParams): Promise<AreaResponse> {
-  return ajax.post('/logs/area', params)
-}
-interface AreaParams {
-  webId: number
-}
-interface AreaResponse extends CommonResponse {
-  data: {
-    area: number[]
-  }
-}
-
-// 查询浏览器类型概率分布
-export function reqBrowser(params: BrowserParams): Promise<BrowserResponse> {
-  return ajax.post('/logs/browser', params)
-}
-interface BrowserParams {
-  webId: number
-}
-interface BrowserResponse extends CommonResponse {
-  data: {
-    browser: number[]
-  }
-}
-
 // 查询所有数据
 export function reqAll(params: AllParams): Promise<AllResponse> {
   return ajax.post('/logs/all', params)

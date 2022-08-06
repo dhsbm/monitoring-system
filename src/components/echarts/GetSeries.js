@@ -5,7 +5,7 @@ function GetSeries(xAxisOption, yAxisOption, data, type, stack) {
     sery.name = d
     sery.type = type
     sery.stack = stack
-    sery.data = data.map((t) => t[i])
+    sery.data = data?.map((t) => t[i])
     series.push(sery)
   })
   return series

@@ -20,7 +20,7 @@ watch(
   () => err,
   () => {
     let series = GetSeries(props.xAxisOption, props.yAxisOption, err.value, 'line', 'Total')
-    if (err.value.length) {
+    if (err.value?.length) {
       let myChart = echarts.init(pieChart.value)
       let option = {
         title: {

@@ -1,5 +1,5 @@
 import Mock from 'mockjs'
-import { errLogs, preLogs, behLogs, httpLogs } from './logs'
+import { errLogs, perLogs, behLogs, httpLogs } from './logs'
 interface Option {
   url: string
   type: string
@@ -124,7 +124,7 @@ Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
       logs = errLogs.slice((page - 1) * 10, page * 10)
       break
     case 1:
-      logs = preLogs.slice((page - 1) * 10, page * 10)
+      logs = perLogs.slice((page - 1) * 10, page * 10)
       break
     case 2:
       logs = behLogs.slice((page - 1) * 10, page * 10)
@@ -142,24 +142,6 @@ Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
 })
 
 // 查询用户地区分布
-Mock.mock('/mock/logs/area', 'post', {
-  code: 0,
-  message: '',
-  data: {
-    area: new Array(35).fill(10),
-  },
-})
-
-// 查询用户地区分布
-Mock.mock('/mock/logs/browser', 'post', {
-  code: 0,
-  message: '',
-  data: {
-    area: new Array(6).fill(10),
-  },
-})
-
-// 查询用户地区分布
 Mock.mock('/mock/logs/all', 'post', {
   code: 0,
   message: '',
@@ -173,7 +155,7 @@ Mock.mock('/mock/logs/all', 'post', {
       [100, 1, 2, 3],
       [100, 1, 2, 3],
     ],
-    pre: [
+    per: [
       [38, 73, 79, 38, 11, 23],
       [38, 73, 79, 38, 11, 23],
       [38, 73, 79, 38, 11, 23],
@@ -229,38 +211,52 @@ Mock.mock('/mock/logs/stat', 'post', {
 Mock.mock('/mock/logs/err', 'post', (option: Option) => {
   const { page } = JSON.parse(option.body)
   return {
-    total: 25,
-    size: 10,
-    page: 1,
-    logs: errLogs.slice((page - 1) * 10, page * 10),
+    code: 0,
+    message: '',
+    data: {
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: errLogs.slice((page - 1) * 10, page * 10),
+    },
   }
 })
 
-Mock.mock('/mock/logs/pre', 'post', (option: Option) => {
+Mock.mock('/mock/logs/per', 'post', (option: Option) => {
   const { page } = JSON.parse(option.body)
   return {
-    total: 25,
-    size: 10,
-    page: 1,
-    logs: preLogs.slice((page - 1) * 10, page * 10),
+    code: 0,
+    message: '',
+    data: {
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: perLogs.slice((page - 1) * 10, page * 10),
+    },
   }
 })
 
 Mock.mock('/mock/logs/beh', 'post', (option: Option) => {
   const { page } = JSON.parse(option.body)
   return {
-    total: 25,
-    size: 10,
-    page: 1,
-    logs: behLogs.slice((page - 1) * 10, page * 10),
+    code: 0,
+    message: '',
+    data: {
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: behLogs.slice((page - 1) * 10, page * 10),
+    },
   }
 })
 Mock.mock('/mock/logs/http', 'post', (option: Option) => {
   const { page } = JSON.parse(option.body)
   return {
-    total: 25,
-    size: 10,
-    page: 1,
-    logs: httpLogs.slice((page - 1) * 10, page * 10),
+    data: {
+      total: 25,
+      size: 10,
+      page: 1,
+      logs: httpLogs.slice((page - 1) * 10, page * 10),
+    },
   }
 })

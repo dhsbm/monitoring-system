@@ -1,6 +1,6 @@
 export const errLogs: any = []
 
-export const preLogs: any = []
+export const perLogs: any = []
 export const behLogs: any = []
 export const httpLogs: any = []
 
@@ -17,7 +17,7 @@ for (let i = 0; i < 25; i++) {
     stack: '触发异常的行为',
     selector: 'window',
   })
-  preLogs.push({
+  perLogs.push({
     log_id: id++,
     kind: 1,
     time: time + id,

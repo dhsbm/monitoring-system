@@ -16,7 +16,8 @@
     "paths": {
       "pages/*": ["src/pages/*"],
       "components/*": ["src/components/*"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@interface/*": ["src/interface/*"]
     },
     "types": ["element-plus/global"]
   },
