@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios, {AxiosResponse, AxiosRequestConfig} from 'axios'
+import { camelizeKeys, decamelizeKeys } from 'humps'
 // 引入进度条
 import NProgress from 'nprogress'
 // 引入进度条样式
@@ -12,7 +13,7 @@ const ajax = axios.create({
 
 // 添加请求拦截器
 ajax.interceptors.request.use(
-  (config) => {
+  (config: AxiosRequestConfig) => {
     // 在发送请求之前做些什么
     NProgress.start()
     return config
@@ -25,9 +26,11 @@ ajax.interceptors.request.use(
 
 // 添加响应拦截器
 ajax.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     // 对响应数据做点什么
     NProgress.done()
+    console.log(response.data)
+    response.data = camelizeKeys(response.data)
     return response.data
   },
   (error) => {

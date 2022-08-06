@@ -116,3 +116,10 @@ export enum Area {
   天津 = 33,
   贵州 = 34,
 }
+
+export interface WebInfo {
+  webId: number,
+  url: string,
+  title: string,
+  warnList: string[]
+}

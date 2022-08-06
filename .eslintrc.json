@@ -13,6 +13,7 @@
     "ecmaVersion": 2020
   },
   "rules": {
+    "no-undef": "off",
     "no-console": "off",
     // 检测html标签自闭和
     "vue/html-self-closing": "off",

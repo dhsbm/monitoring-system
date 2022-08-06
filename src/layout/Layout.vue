@@ -16,4 +16,10 @@ import Headers from './headers/Headers.vue'
 .el-main {
   padding: 0;
 }
+
+/* ::-webkit-scrollbar {
+    display: none;
+    overflow-y: hidden;
+} */
+
 </style>

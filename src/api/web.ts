@@ -7,11 +7,11 @@ export function reqWebList(): Promise<ListResponse> {
 }
 interface ListResponse extends CommonResponse {
   data: {
-    web_list: {
-      web_id: number
+    webList: {
+      webId: number
       url: string
       title: string
-      warn_list: string[] // 目前还是空数组
+      warnList: string[] // 目前还是空数组
     }[]
   }
 }
@@ -26,8 +26,8 @@ interface AddParams {
 }
 interface AddResponse extends CommonResponse {
   data: {
-    web_list: {
-      web_id: number
+    webList: {
+      webId: number
       url: string
       title: string
     }
@@ -39,10 +39,10 @@ export function reqEditWeb(params: EditParams): Promise<EditResponse> {
   return ajax.put('/web/edit', params)
 }
 interface EditParams {
-  web_id: number
+  webId: number
   url?: string
   title?: string
-  warn_list?: string[]
+  warnList?: string[]
 }
 type EditResponse = CommonResponse
 
@@ -53,6 +53,6 @@ export function reqDeleteWeb(params: DeleteParams): Promise<DeleteResponse> {
   })
 }
 interface DeleteParams {
-  web_id: number
+  webId: number
 }
 type DeleteResponse = CommonResponse

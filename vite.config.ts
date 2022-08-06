@@ -4,7 +4,11 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue({
+      reactivityTransform: true,
+    }),
+  ],
   resolve: {
     alias: {
       pages: resolve(__dirname, 'src/pages'),

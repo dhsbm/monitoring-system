@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { camelizeKeys, decamelizeKeys } from 'humps'
 // 引入进度条
 import NProgress from 'nprogress'
 // 引入进度条样式
@@ -14,6 +15,13 @@ const ajax = axios.create({
 ajax.interceptors.request.use(
   (config) => {
     NProgress.start() // 显示进度条
+    //将token写入header
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers!['Authorization'] = 'Bearer ' + token
+    }
+    config.data = decamelizeKeys(config.data)//将请求数据转为snake_case
+    console.log(config)
     return config
   },
   (error) => {
@@ -25,6 +33,7 @@ ajax.interceptors.request.use(
 ajax.interceptors.response.use(
   (response) => {
     NProgress.done() // 隐藏进度条
+    response.data = camelizeKeys(response.data)//将响应数据转为camelCase
     return response.data // 取data
   },
   (error) => {
