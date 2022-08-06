@@ -27,6 +27,17 @@ Mock.mock('/mock/user/register', 'post', {
   },
 })
 
+// 注册
+Mock.mock('/mock/user/info', 'get', {
+  code: 0,
+  message: '获取用户信息成功',
+  data: {
+    name: '测试用户',
+    user_id: 1,
+    token: 'tokentokentokentokentokentoken',
+  },
+})
+
 // 获取网站列表
 Mock.mock('/mock/web/list', 'get', {
   code: 0,
