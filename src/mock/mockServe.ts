@@ -84,7 +84,6 @@ Mock.mock('/mock/web/delete', 'delete', {
 // 查询日志完整信息
 Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
   const { kind, page } = JSON.parse(option.body)
-
   let logs
   switch (kind) {
     case 0:
@@ -187,4 +186,44 @@ Mock.mock('/mock/logs/stat', 'post', {
     [38, 56, 68, 34],
     [38, 56, 68, 34],
   ],
+})
+
+// 查询日志完整信息
+Mock.mock('/mock/logs/err', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    total: 25,
+    size: 10,
+    page: 1,
+    logs: errLogs.slice((page - 1) * 10, page * 10),
+  }
+})
+
+Mock.mock('/mock/logs/pre', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    total: 25,
+    size: 10,
+    page: 1,
+    logs: preLogs.slice((page - 1) * 10, page * 10),
+  }
+})
+
+Mock.mock('/mock/logs/beh', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    total: 25,
+    size: 10,
+    page: 1,
+    logs: behLogs.slice((page - 1) * 10, page * 10),
+  }
+})
+Mock.mock('/mock/logs/http', 'post', (option: Option) => {
+  const { page } = JSON.parse(option.body)
+  return {
+    total: 25,
+    size: 10,
+    page: 1,
+    logs: httpLogs.slice((page - 1) * 10, page * 10),
+  }
 })
