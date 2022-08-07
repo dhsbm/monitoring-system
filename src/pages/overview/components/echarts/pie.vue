@@ -24,13 +24,11 @@ function getData(data: any, item: any) {
   }
   return ans
 }
-console.log(props.titleOption)
 watch(
   () => data,
   () => {
     if (data.value?.length) {
       let pieData = getData(props.data, props.item)
-      console.log(pieData)
       let myChart = echarts.init(pieChart.value)
       let option = {
         title: {

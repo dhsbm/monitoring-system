@@ -20,14 +20,13 @@
         <span id="text">{{ text }}</span>
       </span>
     </template>
-    <div class="bottom_text" v-if="type == 1">{{ text }}</div>
+    <div v-if="type == 1" class="bottom_text">{{ text }}</div>
   </el-progress>
-  <!-- <div v-if="type == 2" class="tip">良好</div> -->
 </template>
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-const props = defineProps({
+defineProps({
   val: Number,
   width: Number,
   strokewidth: Number,

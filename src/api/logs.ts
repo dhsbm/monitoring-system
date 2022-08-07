@@ -7,6 +7,7 @@ export function reqAll(params: AllParams): Promise<AllResponse> {
 }
 interface AllParams {
   webId: number
+  endTime: number
 }
 interface AllResponse extends CommonResponse {
   data: {
@@ -28,6 +29,7 @@ export function reqStat(params: StatParams): Promise<StatResponse> {
 interface StatParams {
   webId: number
   kind: Kind
+  endTime: number
   time: Time
   index?: number // 区分行为日志和请求日志的两个表
 }

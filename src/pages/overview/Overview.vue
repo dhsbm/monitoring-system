@@ -55,57 +55,81 @@
     </div>
     <span class="title">核心数据</span>
     <div class="heathyData">
-      <div class="heathyData-line">
-        <div class="line_1">
-          <LineVue
-            :title-option="`异常数据表`"
-            :x-axis-option="xAxis_err"
-            :y-axis-option="yAxis_err"
-            :data="errData"
-          ></LineVue>
-          <LineVue
-            :title-option="`网页性能表`"
-            :x-axis-option="xAxis_per"
-            :y-axis-option="yAxis_per"
-            :data="perData"
-          ></LineVue>
-        </div>
-        <div class="line_2">
-          <LineVue
-            :title-option="`请求数图表`"
-            :x-axis-option="xAxis_err"
-            :y-axis-option="yAxis_http1"
-            :data="http1Data"
-          ></LineVue>
-          <LineVue
-            :title-option="`请求时间表`"
-            :x-axis-option="xAxis_err"
-            :y-axis-option="yAxis_http2"
-            :data="http2Data"
-          ></LineVue>
-        </div>
+      <div class="line_1">
+        <LineVue
+          :title-option="`异常数据表`"
+          :x-axis-option="showData.errX"
+          :y-axis-option="yAxis_err"
+          :data="showData.err"
+          :kind="0"
+          :index="0"
+          :time-index="2"
+          @change-x="changeX"
+        ></LineVue>
+        <LineVue
+          :title-option="`网页性能表`"
+          :x-axis-option="showData.perX"
+          :y-axis-option="yAxis_per"
+          :data="showData.per"
+          :kind="1"
+          :index="0"
+          :time-index="2"
+          @change-x="changeX"
+        ></LineVue>
+      </div>
+      <div class="line_2">
+        <LineVue
+          :title-option="`请求数图表`"
+          :x-axis-option="showData.http1X"
+          :y-axis-option="yAxis_http1"
+          :data="showData.http1"
+          :kind="3"
+          :index="0"
+          :time-index="2"
+          @change-x="changeX"
+        ></LineVue>
+        <LineVue
+          :title-option="`请求时间表`"
+          :x-axis-option="showData.http2X"
+          :y-axis-option="yAxis_http2"
+          :data="showData.http2"
+          :kind="3"
+          :index="1"
+          :time-index="2"
+          @change-x="changeX"
+        ></LineVue>
       </div>
     </div>
     <span class="title">用户行为数据</span>
     <div class="userData">
-      <div class="userData-line">
-        <LineVue
-          :title-option="`用户停留时间`"
-          :x-axis-option="xAxis_err"
-          :y-axis-option="yAxis_user2"
-          :data="user2Data"
-        ></LineVue>
-        <LineVue
-          :title-option="`用户访问量`"
-          :x-axis-option="xAxis_err"
-          :y-axis-option="yAxis_user1"
-          :data="user1Data"
-        ></LineVue>
-      </div>
+      <LineVue
+        :title-option="`用户访问量`"
+        :x-axis-option="showData.user1X"
+        :y-axis-option="yAxis_user1"
+        :data="showData.user1"
+        :kind="2"
+        :index="0"
+        :time-index="2"
+        @change-x="changeX"
+      ></LineVue>
+      <LineVue
+        :title-option="`用户停留时间`"
+        :x-axis-option="showData.user2X"
+        :y-axis-option="yAxis_user2"
+        :data="showData.user2"
+        :kind="2"
+        :index="1"
+        :time-index="2"
+        @change-x="changeX"
+      ></LineVue>
     </div>
     <div class="mapData">
       <mapVue />
-      <pieVue :title-option="`用户浏览器类型`" :item="browser_item" :data="browserData"></pieVue>
+      <pieVue
+        :title-option="`用户浏览器类型`"
+        :item="browser_item"
+        :data="showData.browser"
+      ></pieVue>
     </div>
   </div>
 </template>
@@ -115,9 +139,11 @@ import mapVue from './components/mapVue/index.vue'
 import process from './components/progress/index.vue'
 import LineVue from './components/echarts/line.vue'
 import pieVue from './components//echarts/pie.vue'
-import { reqAll } from '@/api/index'
-//请求数据
-import { ref } from 'vue'
+import { reqAll, reqStat } from '@/api/index'
+import { reactive } from 'vue'
+import { useWebStore } from '@/store'
+import { ElMessage } from 'element-plus'
+const webstore = useWebStore()
 
 const nums = {
   jsErr: (Math.random() * 100) | 0,
@@ -132,7 +158,7 @@ const getColor = (score: number, sign = false): string => {
     else if (score > 60) return '#ff9724'
     else return '#ff6470'
   } else {
-    if (score > 80) return '#ff6470'
+    if (score > 75) return '#ff6470'
     else if (score > 20) return '#ff9724'
     else return '#28c989'
   }
@@ -145,38 +171,127 @@ const color = {
   whiteErr: getColor(nums.whiteErr),
 }
 
-let xAxis_err = ['4h', '1d', '7d', '14d', '30d']
+const timeRange = [
+  4 * 3600 * 1000, // 4h
+  24 * 3600 * 1000, // 1d
+  7 * 24 * 3600 * 1000, // 7d
+  14 * 24 * 3600 * 1000, // 14d
+  30 * 24 * 3600 * 1000, // 30d
+]
+const timeGap = [
+  15 * 60 * 1000, // 15min
+  2 * 3600 * 1000, // 2h
+  24 * 3600 * 1000, // 1d
+  24 * 3600 * 1000, // 1d
+  2 * 24 * 3600 * 1000, // 2d
+]
+function getEndTime(index: number) {
+  const time = Date.now()
+  const gap = timeGap[index]
+  const r = time % gap
+  return time - r + gap
+}
+function getTimeRange(index: number) {
+  const range = timeRange[index]
+  const gap = timeGap[index]
+  const endTime = getEndTime(index)
+  const res: string[] = []
+  let startTime = endTime - range
+  while (startTime < endTime) {
+    startTime += gap
+    const date = new Date(startTime)
+    let str: string
+    if (index == 0) {
+      str = date.getHours() + ':' + addZero(date.getMinutes())
+    } else if (index == 1) {
+      str = date.getHours() + ':00'
+    } else {
+      str = date.getMonth() + 1 + '-' + date.getDate()
+    }
+    res.push(str!)
+  }
+  console.log(res)
+  return res
+}
+function addZero(s: number | string) {
+  s = s + ''
+  if (s.length < 2) s += '0'
+  return s
+}
+
+const xAxis = getTimeRange(2)
+
 let yAxis_err = ['JS错误', '自定义异常', '静态资源异常', '接口异常']
-let xAxis_per = xAxis_err
-let yAxis_per = ['性能1', '性能2', '性能3', '性能4', '性能5', '性能6']
+let yAxis_per = ['dns', 'fp', 'fcp', 'lcp', 'dcl', 'l']
 let yAxis_user1 = ['pv', 'pu']
 let yAxis_user2 = ['用户停留时间']
 let yAxis_http1 = ['成功请求数', '失败请求数']
 let yAxis_http2 = ['响应时间']
-let browser_item = ['性能1', '性能2', '性能3', '性能4', '性能5', '性能6']
+let browser_item = ['其他', 'Chrome', 'Edge', 'Firefox', 'IE', 'Opera', 'Safari']
 
-let errData: any = ref([])
-let perData: any = ref([])
-let user1Data: any = ref([])
-let user2Data: any = ref([])
-let http1Data: any = ref([])
-let http2Data: any = ref([])
-let browserData: any = ref([])
-let areaData: any = ref([])
+const showData: Data = reactive({
+  err: [],
+  errX: xAxis,
+  per: [],
+  perX: xAxis,
+  user1: [],
+  user1X: xAxis,
+  user2: [],
+  user2X: xAxis,
+  http1: [],
+  http1X: xAxis,
+  http2: [],
+  http2X: xAxis,
+  browser: [],
+  area: [],
+})
+
+interface Data {
+  err: number[][]
+  errX: string[]
+  per: number[][]
+  perX: string[]
+  user1: number[][]
+  user1X: string[]
+  user2: number[][]
+  user2X: string[]
+  http1: number[][]
+  http1X: string[]
+  http2: number[][]
+  http2X: string[]
+  browser: number[]
+  area: number[]
+}
+
+const changeX = (kind: number, index: number, timeIndex: number) => {
+  reqStat({
+    webId: webstore.webId,
+    kind,
+    index,
+    time: timeIndex,
+    endTime: getEndTime(timeIndex),
+  }).then(({ code, data }) => {
+    if (code == 0) {
+      switch (kind) {
+        case 0:
+          showData.err = data
+          showData.errX = getTimeRange(timeIndex)
+          break
+      }
+    } else {
+      ElMessage({
+        message: '网络异常',
+        type: 'warning',
+      })
+    }
+  })
+}
 
 reqAll({
   webId: 1,
-}).then((data) => {
-  let { err, browser, area, http1, http2, per, user1, user2 } = data.data
-  errData.value = err
-  perData.value = per
-  user1Data.value = user1
-  user2Data.value = user2
-  http1Data.value = http1
-  http2Data.value = http2
-  browserData.value = browser
-  areaData.value = area
-  // console.log(area)
+  endTime: getEndTime(2),
+}).then(({ data }) => {
+  Object.assign(showData, data)
 })
 </script>
 
@@ -221,36 +336,26 @@ reqAll({
     }
   }
   .heathyData {
-    .heathyData-line {
-      display: flex;
-      flex-wrap: wrap;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    .line_1 {
       margin-top: 1rem;
-      width: 100%;
-      height: 60rem;
-      background-color: white;
-      border-radius: 1rem;
-      .line_1 {
-        display: flex;
-        flex: 1;
-        justify-content: center;
-      }
-      .line_2 {
-        display: flex;
-        flex: 1;
-        justify-content: center;
-      }
+      display: flex;
+      justify-content: center;
+    }
+    .line_2 {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
     }
   }
 
   .userData {
-    .userData-line {
-      display: flex;
-      margin-top: 1rem;
-      width: 100%;
-      height: 35rem;
-      background-color: white;
-      border-radius: 1rem;
-    }
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    display: flex;
   }
   .mapData {
     background-color: white;
