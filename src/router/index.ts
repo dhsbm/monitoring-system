@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/layout/Layout.vue'
 import Login from 'pages/login/Login.vue'
-import { useUserStore } from '@/store'
+import { useUserStore, useWebStore } from '@/store'
 
 // 2. 定义一些路由
 // 每个路由都需要映射到一个组件。
@@ -56,9 +56,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes, // `routes: routes` 的缩写
 })
-
+let webStore: any
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
+  if (!webStore) {
+    webStore = useWebStore()
+  }
+  if (webStore.webId == -1) {
+    webStore.getWebs()
+  }
   if (!userStore.logined && to.path != '/login') {
     userStore
       .getInfo()

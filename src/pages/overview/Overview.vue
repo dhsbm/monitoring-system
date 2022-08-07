@@ -210,7 +210,6 @@ function getTimeRange(index: number) {
     }
     res.push(str!)
   }
-  console.log(res)
   return res
 }
 function addZero(s: number | string) {

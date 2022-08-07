@@ -4,6 +4,8 @@ import { computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useWebStore } from '@/store'
 import { switchShow } from './modal'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const props = defineProps<{
   webInfo: WebInfo
@@ -70,12 +72,19 @@ const deleteWeb = () => {
       })
     })
 }
+
+function go() {
+  webStore.webId = props.webInfo.webId
+  router.push('/overview')
+}
 </script>
 
 <template>
   <div class="rounded-xl bg-white flex-col flex p-4 hover:drop-shadow-lg">
     <div class="flex flex-row">
-      <h1 class="text-xl font-semibold inline-block flex-1">{{ webInfo.title }}</h1>
+      <h1 class="text-xl font-semibold inline-block flex-1" style="cursor: pointer" @click="go">
+        {{ webInfo.title }}
+      </h1>
       <Setting
         class="w-4 text-slate-400 p-1 hover:text-slate-800 cursor-pointer"
         @click="editWeb"
