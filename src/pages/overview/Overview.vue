@@ -1,60 +1,60 @@
 <template>
   <div class="container">
+    <span class="title">健康状况</span>
     <div class="mainData">
-      <span class="title">健康状况</span>
       <div class="mainData-line">
         <div class="mainData-left-line">
           <process
-            :val="93"
+            :val="score"
             :width="200"
             :strokewidth="20"
             :type="2"
             :text="'健康状况'"
-            :color="'#28c989'"
+            :color="color.total"
           />
         </div>
         <div class="mainData-right-line">
           <process
-            :val="10"
+            :val="nums.jsErr"
             :width="130"
             :strokewidth="10"
             :type="1"
             :text="`JS错误`"
-            :color="`#ff9724`"
+            :color="color.jsErr"
             class="item"
           />
           <process
-            :val="30"
-            :width="130"
-            :strokewidth="10"
-            :type="1"
-            :text="`自定义异常`"
-            :color="`#3695ff`"
-            class="item"
-          />
-          <process
-            :val="50"
+            :val="nums.srcErr"
             :width="130"
             :strokewidth="10"
             :type="1"
             :text="`静态资源异常`"
-            :color="`#7a79ff`"
+            :color="color.srcErr"
             class="item"
           />
           <process
-            :val="60"
+            :val="nums.httpErr"
             :width="130"
             :strokewidth="10"
             :type="1"
-            :text="`接口异常`"
-            :color="`#ff6470`"
+            :text="`网络请求异常`"
+            :color="color.httpErr"
+            class="item"
+          />
+          <process
+            :val="nums.whiteErr"
+            :width="130"
+            :strokewidth="10"
+            :type="1"
+            :text="`白屏异常`"
+            :color="color.whiteErr"
             class="item"
           />
         </div>
       </div>
     </div>
+    <span class="title">核心数据</span>
     <div class="heathyData">
-      <span class="title">核心数据</span>
       <div class="heathyData-line">
         <div class="line_1">
           <LineVue
@@ -86,16 +86,9 @@
         </div>
       </div>
     </div>
-    <div class="mapData">
-      <span class="title">用户地域分布图</span>
-      <div class="mapData-line">
-        <mapVue />
-      </div>
-    </div>
+    <span class="title">用户行为数据</span>
     <div class="userData">
-      <span class="title">用户相关</span>
       <div class="userData-line">
-        <pieVue :title-option="`用户浏览器类型`" :item="browser_item" :data="browserData"></pieVue>
         <LineVue
           :title-option="`用户停留时间`"
           :x-axis-option="xAxis_err"
@@ -110,6 +103,10 @@
         ></LineVue>
       </div>
     </div>
+    <div class="mapData">
+      <mapVue />
+      <pieVue :title-option="`用户浏览器类型`" :item="browser_item" :data="browserData"></pieVue>
+    </div>
   </div>
 </template>
 
@@ -121,6 +118,33 @@ import pieVue from './components//echarts/pie.vue'
 import { reqAll } from '@/api/index'
 //请求数据
 import { ref } from 'vue'
+
+const nums = {
+  jsErr: (Math.random() * 100) | 0,
+  srcErr: (Math.random() * 100) | 0,
+  httpErr: (Math.random() * 50) | 0,
+  whiteErr: (Math.random() * 10) | 0,
+}
+const score = (100 - (nums.jsErr + nums.srcErr + nums.httpErr + nums.whiteErr) / 4) | 0
+const getColor = (score: number, sign = false): string => {
+  if (sign) {
+    if (score > 85) return '#28c989'
+    else if (score > 60) return '#ff9724'
+    else return '#ff6470'
+  } else {
+    if (score > 80) return '#ff6470'
+    else if (score > 20) return '#ff9724'
+    else return '#28c989'
+  }
+}
+const color = {
+  total: getColor(score, true),
+  jsErr: getColor(nums.jsErr),
+  srcErr: getColor(nums.srcErr),
+  httpErr: getColor(nums.httpErr),
+  whiteErr: getColor(nums.whiteErr),
+}
+
 let xAxis_err = ['4h', '1d', '7d', '14d', '30d']
 let yAxis_err = ['JS错误', '自定义异常', '静态资源异常', '接口异常']
 let xAxis_per = xAxis_err
@@ -162,15 +186,18 @@ reqAll({
   font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 600;
   color: #434343;
+  margin: 1rem 0;
 }
 .container {
+  & > div {
+    margin: 1rem 0;
+  }
   overflow: hidden;
   width: 95vw;
   margin: 0 auto;
+  padding-top: 1rem;
   .mainData {
-    margin-top: 10px;
     width: 100%;
-    height: 25rem;
     .mainData-line {
       display: flex;
       align-items: center;
@@ -194,11 +221,8 @@ reqAll({
     }
   }
   .heathyData {
-    width: 100%;
-    height: 20rem;
     .heathyData-line {
       display: flex;
-
       flex-wrap: wrap;
       margin-top: 1rem;
       width: 100%;
@@ -217,22 +241,8 @@ reqAll({
       }
     }
   }
-  .mapData {
-    margin-top: 50rem;
-    width: 100%;
-    height: 50rem;
-    .mapData-line {
-      margin-top: 1rem;
-      width: 100%;
-      height: 45rem;
-      background-color: white;
-      border-radius: 1rem;
-    }
-  }
+
   .userData {
-    margin-top: 1rem;
-    width: 100%;
-    height: 70rem;
     .userData-line {
       display: flex;
       margin-top: 1rem;
@@ -241,6 +251,11 @@ reqAll({
       background-color: white;
       border-radius: 1rem;
     }
+  }
+  .mapData {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
   }
 }
 </style>

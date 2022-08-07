@@ -1,5 +1,8 @@
 <template>
-  <div id="main"></div>
+  <div>
+    <p style="font-size: 18px; font-weight: 600; text-align: center">用户地域分布图</p>
+    <div id="main"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
