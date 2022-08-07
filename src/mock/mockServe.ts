@@ -140,71 +140,108 @@ Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
     logs,
   }
 })
-
+const area = []
+for (let i = 0; i < 35; i++) {
+  area.push((Math.random() * 100) | 0)
+}
+const browser = []
+for (let i = 0; i < 16; i++) {
+  browser.push((Math.random() * 100) | 0)
+}
+const err: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 4; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  err.push(arr)
+}
+const per: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 6; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  per.push(arr)
+}
+const user1: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 2; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  user1.push(arr)
+}
+const user2: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 1; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  user2.push(arr)
+}
+const http1: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 1; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  http1.push(arr)
+}
+const http2: any = []
+for (let i = 0; i < 16; i++) {
+  const arr = []
+  for (let j = 0; j < 2; j++) {
+    arr.push((Math.random() * 100) | 0)
+  }
+  http2.push(arr)
+}
 // 查询用户地区分布
 Mock.mock('/mock/logs/all', 'post', {
   code: 0,
   message: '',
   data: {
-    err: [
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-      [100, 1, 2, 3],
-    ],
-    per: [
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-      [38, 73, 79, 38, 11, 23],
-    ],
-    user1: [
-      [98, 20],
-      [20, 43],
-      [98, 20],
-      [98, 20],
-      [98, 20],
-      [98, 20],
-      [98, 20],
-    ],
-    user2: [[83], [82], [34], [100], [53], [13], [203]],
-    http1: [
-      [25, 75],
-      [25, 75],
-      [25, 75],
-      [25, 75],
-      [25, 75],
-      [25, 75],
-      [25, 75],
-    ],
-    http2: [[87], [87], [87], [87], [87], [87], [87]],
-    browser: [49, 120, 20, 0, 0, 0, 0],
-    area: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
-      2, 3, 4, 5,
-    ],
+    err,
+    per,
+    user1,
+    user2,
+    http1,
+    http2,
+    browser,
+    area,
   },
 })
 
 // 查询日志统计信息 只提供错误查询
-Mock.mock('/mock/logs/stat', 'post', {
-  code: 0,
-  message: '',
-  data: [
-    [38, 56, 68, 34],
-    [9, 32, 5, 3],
-    [66, 53, 93, 39],
-    [27, 44, 27, 44],
-    [66, 53, 93, 39],
-    [38, 56, 68, 34],
-    [38, 56, 68, 34],
-  ],
+Mock.mock('/mock/logs/stat', 'post', (option: Option) => {
+  const { kind, index } = JSON.parse(option.body)
+  let data: any
+  switch (kind) {
+    case 0:
+      data = err
+      break
+    case 1:
+      data = per
+      break
+    case 2:
+      if (index == 0) {
+        data = user1
+      } else {
+        data = user2
+      }
+      break
+    case 3:
+      if (index == 0) {
+        data = http1
+      } else {
+        data = http2
+      }
+  }
+  return {
+    code: 0,
+    message: '',
+    data,
+  }
 })
 
 // 查询日志完整信息

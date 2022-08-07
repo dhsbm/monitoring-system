@@ -1,69 +1,66 @@
 <template>
-  <div ref="pieChart" style="width: 30rem; height: 30rem"></div>
+  <div ref="pieChart" style="width: 40rem"></div>
 </template>
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { defineProps, toRef, watch, ref } from 'vue'
+import { defineProps, watch, ref } from 'vue'
 
 let pieChart = ref()
-const props = defineProps({
-  titleOption: String,
-  item: Array,
-  data: Array,
-})
-let data = toRef(props, 'data')
-
-function getData(data: any, item: any) {
+const props = defineProps<{
+  item: string[]
+  data: number[]
+}>()
+function getData(data: number[], item: string[]) {
   let ans = []
   for (let i = 0; i < item.length; i++) {
-    const t: any = {}
+    const t = {} as { value: number; name: string }
     t.value = data[i]
     t.name = item[i]
     ans.push(t)
   }
   return ans
 }
+
+let option = {
+  title: {
+    text: '用户浏览器类型',
+    top: '10%',
+    left: 'center',
+  },
+  tooltip: {
+    trigger: 'item',
+  },
+  legend: {
+    top: '15%',
+    left: 'center',
+  },
+  series: [
+    {
+      name: '用户浏览器类型',
+      type: 'pie',
+      radius: '50%',
+      data: [],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+        },
+      },
+    },
+  ],
+}
+
 watch(
-  () => data,
-  () => {
-    if (data.value?.length) {
+  () => props.data,
+  (now) => {
+    if (now.length) {
       let pieData = getData(props.data, props.item)
       let myChart = echarts.init(pieChart.value)
-      let option = {
-        title: {
-          text: props.titleOption,
-          left: 'center',
-        },
-        tooltip: {
-          trigger: 'item',
-        },
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-        },
-        series: [
-          {
-            name: props.titleOption,
-            type: 'pie',
-            radius: '50%',
-            data: pieData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
-          },
-        ],
-      }
+      option.series[0].data = pieData as never[]
       myChart.setOption(option)
     }
-  },
-  {
-    immediate: true,
-    deep: true,
   }
 )
 </script>

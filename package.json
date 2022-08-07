@@ -10,22 +10,22 @@
     "commit": "pnpm cz"
   },
   "dependencies": {
+    "@babel/parser": "7.18.10",
     "@element-plus/icons-vue": "^2.0.6",
-    "@types/humps": "^2.0.2",
-    "@types/echarts": "^4.9.16",
     "axios": "^0.27.2",
-    "echarts": "^5.3.3",
+    "echarts": "5.3.3",
     "element-plus": "^2.2.11",
     "humps": "^2.0.1",
     "mockjs": "^1.1.0",
     "nprogress": "^0.2.0",
-    "pinia": "^2.0.17",
-    "vue": "^3.2.26",
+    "pinia": "2",
+    "vue": "3.2.26",
     "vue-router": "4"
   },
   "devDependencies": {
     "@commitlint/cli": "12.1.4",
     "@commitlint/config-conventional": "12.1.4",
+    "@types/humps": "^2.0.2",
     "@types/mockjs": "^1.0.6",
     "@types/node": "^16.11.45",
     "@types/nprogress": "^0.2.0",

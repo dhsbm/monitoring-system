@@ -16,8 +16,7 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { defineProps, toRef, watch, ref } from 'vue'
-import GetSeries from './GetSeries.js'
+import { defineProps, watch, ref, onMounted } from 'vue'
 let pieChart = ref()
 const props = defineProps<{
   titleOption: string
@@ -30,48 +29,62 @@ const props = defineProps<{
 }>()
 const emits = defineEmits(['changeX'])
 
-let err = toRef(props, 'data')
+let myChart: any
+onMounted(() => {
+  myChart = echarts.init(pieChart.value)
+})
+const options: any = {
+  title: {
+    text: props.titleOption,
+  },
+  tooltip: {
+    trigger: 'axis',
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true,
+  },
+  yAxis: {
+    type: 'value',
+  },
+  series: [
+    {
+      data: [150, 230, 224, 218, 135, 147, 260],
+      type: 'line',
+    },
+  ],
+}
+
 const range = ['最近4小时', '最近1天', '最近7天', '最近14天', '最近30天']
 watch(
-  () => err,
+  () => props.data,
   () => {
-    let series = GetSeries(props.xAxisOption, props.yAxisOption, err.value, 'line', 'Total')
-    if (err.value?.length) {
-      let myChart = echarts.init(pieChart.value)
-      let option = {
-        title: {
-          text: props.titleOption,
-        },
-        tooltip: {
-          trigger: 'axis',
-        },
-        legend: {
-          data: props.yAxisOption,
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true,
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: props.xAxisOption,
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: series,
-      }
-      myChart.setOption(option)
+    let series = GetSeries(props.yAxisOption, props.data)
+    options.series = series
+    options.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: props.xAxisOption,
     }
-  },
-  {
-    immediate: true,
-    deep: true,
+    options.legend = {
+      data: props.yAxisOption,
+    }
+    myChart.setOption(options)
   }
 )
+
+function GetSeries(yAxisOption: string[], data: number[][]) {
+  return yAxisOption.map((d: string, i: number) => {
+    const sery: any = {}
+    sery.name = d
+    sery.type = 'line'
+    sery.stack = 'Total'
+    sery.data = data.map((t: number[]) => t[i])
+    return sery
+  })
+}
 </script>
 
 <style scoped lang="scss">

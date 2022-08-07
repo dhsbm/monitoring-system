@@ -63,7 +63,7 @@
           :data="showData.err"
           :kind="0"
           :index="0"
-          :time-index="2"
+          :time-index="showData.erri"
           @change-x="changeX"
         ></LineVue>
         <LineVue
@@ -73,7 +73,7 @@
           :data="showData.per"
           :kind="1"
           :index="0"
-          :time-index="2"
+          :time-index="showData.peri"
           @change-x="changeX"
         ></LineVue>
       </div>
@@ -85,7 +85,7 @@
           :data="showData.http1"
           :kind="3"
           :index="0"
-          :time-index="2"
+          :time-index="showData.http1i"
           @change-x="changeX"
         ></LineVue>
         <LineVue
@@ -95,7 +95,7 @@
           :data="showData.http2"
           :kind="3"
           :index="1"
-          :time-index="2"
+          :time-index="showData.http2i"
           @change-x="changeX"
         ></LineVue>
       </div>
@@ -109,7 +109,7 @@
         :data="showData.user1"
         :kind="2"
         :index="0"
-        :time-index="2"
+        :time-index="showData.user1i"
         @change-x="changeX"
       ></LineVue>
       <LineVue
@@ -119,17 +119,13 @@
         :data="showData.user2"
         :kind="2"
         :index="1"
-        :time-index="2"
+        :time-index="showData.user2i"
         @change-x="changeX"
       ></LineVue>
     </div>
     <div class="mapData">
-      <mapVue />
-      <pieVue
-        :title-option="`用户浏览器类型`"
-        :item="browser_item"
-        :data="showData.browser"
-      ></pieVue>
+      <mapVue :area="showData.area" />
+      <pieVue :item="browser_item" :data="showData.browser"></pieVue>
     </div>
   </div>
 </template>
@@ -231,33 +227,45 @@ let browser_item = ['其他', 'Chrome', 'Edge', 'Firefox', 'IE', 'Opera', 'Safar
 const showData: Data = reactive({
   err: [],
   errX: xAxis,
+  erri: 2,
   per: [],
   perX: xAxis,
+  peri: 2,
   user1: [],
   user1X: xAxis,
+  user1i: 2,
   user2: [],
   user2X: xAxis,
+  user2i: 2,
   http1: [],
   http1X: xAxis,
+  http1i: 2,
   http2: [],
   http2X: xAxis,
+  http2i: 2,
   browser: [],
   area: [],
 })
 
 interface Data {
   err: number[][]
-  errX: string[]
   per: number[][]
-  perX: string[]
   user1: number[][]
-  user1X: string[]
   user2: number[][]
-  user2X: string[]
   http1: number[][]
-  http1X: string[]
   http2: number[][]
+  errX: string[]
+  perX: string[]
+  user1X: string[]
+  user2X: string[]
+  http1X: string[]
   http2X: string[]
+  erri: number
+  peri: number
+  user1i: number
+  user2i: number
+  http1i: number
+  http2i: number
   browser: number[]
   area: number[]
 }
@@ -275,7 +283,34 @@ const changeX = (kind: number, index: number, timeIndex: number) => {
         case 0:
           showData.err = data
           showData.errX = getTimeRange(timeIndex)
+          showData.erri = timeIndex
           break
+        case 1:
+          showData.per = data
+          showData.perX = getTimeRange(timeIndex)
+          showData.peri = timeIndex
+          break
+        case 2:
+          if (index == 0) {
+            showData.user1 = data
+            showData.user1X = getTimeRange(timeIndex)
+            showData.user1i = timeIndex
+          } else {
+            showData.user2 = data
+            showData.user2X = getTimeRange(timeIndex)
+            showData.user2i = timeIndex
+          }
+          break
+        case 3:
+          if (index == 0) {
+            showData.http1 = data
+            showData.http1X = getTimeRange(timeIndex)
+            showData.http1i = timeIndex
+          } else {
+            showData.http2 = data
+            showData.http2X = getTimeRange(timeIndex)
+            showData.http2i = timeIndex
+          }
       }
     } else {
       ElMessage({
@@ -360,6 +395,8 @@ reqAll({
     background-color: white;
     display: flex;
     justify-content: space-between;
+    padding: 1rem;
+    height: 700px;
   }
 }
 </style>
