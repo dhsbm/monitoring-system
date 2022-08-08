@@ -1,4 +1,4 @@
-import axios, {AxiosResponse, AxiosRequestConfig} from 'axios'
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { camelizeKeys, decamelizeKeys } from 'humps'
 // 引入进度条
 import NProgress from 'nprogress'
@@ -7,15 +7,21 @@ import 'nprogress/nprogress.css'
 
 // 使用自定义配置新建一个 axios 实例
 const ajax = axios.create({
-  baseURL: '/api', // 基础路径
-  timeout: 5000, // 请求超时时间
+  baseURL: 'http://47.100.57.184:3333/', // 基础路径
+  timeout: 3000, // 请求超时时间
 })
 
 // 添加请求拦截器
 ajax.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    // 在发送请求之前做些什么
     NProgress.start()
+    //将token写入header
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers!['Authorization'] = token
+    }
+    config.data = decamelizeKeys(config.data) //将请求数据转为snake_case
+    // console.log(config)
     return config
   },
   (error) => {

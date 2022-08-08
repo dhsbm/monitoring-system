@@ -8,7 +8,7 @@ import 'nprogress/nprogress.css'
 // 使用自定义配置新建一个 axios 实例
 const ajax = axios.create({
   baseURL: '/mock', // 基础路径
-  timeout: 5000, // 请求超时时间
+  timeout: 3000, // 请求超时时间
 })
 
 // 添加请求拦截器

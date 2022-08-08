@@ -136,7 +136,7 @@ import Progress from './components/Progress.vue'
 import Line from './components/Line.vue'
 import Pie from './components/Pie.vue'
 import { reqAll, reqStat } from '@/api/index'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
 import { getEndTime, getTimeRange } from '@/common'
@@ -277,11 +277,22 @@ const changeX = (kind: number, index: number, timeIndex: number) => {
 }
 
 reqAll({
-  webId: 1,
+  webId: webstore.webId,
   endTime: getEndTime(2),
 }).then(({ data }) => {
   Object.assign(showData, data)
 })
+watch(
+  () => webstore.webId,
+  () => {
+    reqAll({
+      webId: webstore.webId,
+      endTime: getEndTime(2),
+    }).then(({ data }) => {
+      Object.assign(showData, data)
+    })
+  }
+)
 </script>
 
 <style lang="scss" scoped>

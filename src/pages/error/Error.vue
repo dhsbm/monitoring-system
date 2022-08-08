@@ -109,6 +109,7 @@ const searchData = (page = 1) => {
     page,
     condition,
   }).then(({ code, data }) => {
+    console.log(data)
     if (code == 0) {
       showData.logs = data.logs.map((val) => {
         return {
