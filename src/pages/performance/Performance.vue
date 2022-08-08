@@ -142,23 +142,12 @@
         @current-change="searchData"
       />
     </div>
-    <!-- <el-dialog
-      title="筛选规则"
-      v-model="showSet"
-      :before-close="setClose"
-      style="text-align: center"
-    >
-      <select-list
-        v-model:condition="curReqCondition"
-        @myclick="searchData"
-      ></select-list> </el-dialog
-    >筛选列表 -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { reqPer } from '@/api/index'
-import { ref, Ref, watch, reactive, computed } from 'vue'
+import { ref, watch, reactive, computed } from 'vue'
 import { useWebStore } from '@/store'
 import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
 import { ElMessage } from 'element-plus'

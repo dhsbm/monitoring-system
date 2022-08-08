@@ -108,7 +108,6 @@ const endTime = ref('')
 let condition = reactive({
   time: computed(() => {
     const [startTime, endTime] = getBothTime(timeIndex.value)
-    console.log(startTime + '_' + endTime)
     return startTime + '_' + endTime
   }),
   url: '',

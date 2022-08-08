@@ -5,6 +5,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useWebStore } from '@/store'
 import { switchShow } from './modal'
 import { useRouter } from 'vue-router'
+import { Delete, Setting } from '@element-plus/icons-vue'
+
 const router = useRouter()
 
 const props = defineProps<{
@@ -82,9 +84,12 @@ function go() {
 <template>
   <div class="rounded-xl bg-white flex-col flex p-4 hover:drop-shadow-lg">
     <div class="flex flex-row">
-      <h1 class="text-xl font-semibold inline-block flex-1" style="cursor: pointer" @click="go">
+      <span class="text-xl font-semibold inline-block" style="cursor: pointer" @click="go">
         {{ webInfo.title }}
-      </h1>
+      </span>
+      <span style="flex: 1; font-size: 12px; color: gray; margin-left: 10px; margin-top: 14px">
+        ID: {{ webInfo.webId }}
+      </span>
       <Setting
         class="w-4 text-slate-400 p-1 hover:text-slate-800 cursor-pointer"
         @click="editWeb"
