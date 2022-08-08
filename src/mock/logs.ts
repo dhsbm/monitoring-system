@@ -44,7 +44,7 @@ for (let i = 0; i < 25; i++) {
     url: 'www.baidu.com',
     res_time: (Math.random() * 100) | 0,
     send_url: 'www.baidu.com',
-    way: 'get',
+    way: 'GET',
     success: 0,
     status: 200,
     // req_header: '长字符串',

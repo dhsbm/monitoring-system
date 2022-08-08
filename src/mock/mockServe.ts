@@ -115,31 +115,6 @@ Mock.mock('/mock/web/delete', 'delete', () => {
   }
 })
 
-// 查询日志完整信息
-Mock.mock('/mock/logs/detail', 'post', (option: Option) => {
-  const { kind, page } = JSON.parse(option.body)
-  let logs
-  switch (kind) {
-    case 0:
-      logs = errLogs.slice((page - 1) * 10, page * 10)
-      break
-    case 1:
-      logs = perLogs.slice((page - 1) * 10, page * 10)
-      break
-    case 2:
-      logs = behLogs.slice((page - 1) * 10, page * 10)
-      break
-    case 3:
-      logs = httpLogs.slice((page - 1) * 10, page * 10)
-      break
-  }
-  return {
-    total: 25,
-    size: 10,
-    page: 1,
-    logs,
-  }
-})
 const area = []
 for (let i = 0; i < 35; i++) {
   area.push((Math.random() * 100) | 0)
@@ -289,6 +264,8 @@ Mock.mock('/mock/logs/beh', 'post', (option: Option) => {
 Mock.mock('/mock/logs/http', 'post', (option: Option) => {
   const { page } = JSON.parse(option.body)
   return {
+    code: 0,
+    message: '',
     data: {
       total: 25,
       size: 10,

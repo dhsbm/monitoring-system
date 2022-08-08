@@ -1,61 +1,88 @@
 <template>
-  <div>
-    <Search v-model:url="curReqCondition.url" @myclick="searchData" /><!-- 搜索框 -->
-    <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
+  <div class="container">
+    <h1>网络请求日志</h1>
+    <div class="filter">
       <el-select
-        v-model="curWebId"
+        v-model="timeIndex"
         class="m-2"
         placeholder="Select"
-        style="float: left; width: 150px"
+        style="width: 120px; margin-right: 60px"
+        @change="searchData()"
       >
-        <el-option v-for="item in WebIdOption" :key="item" :value="item" /> </el-select
-      ><!-- 网站id选择 -->
+        <el-option
+          v-for="item in timeOption"
+          :key="item.value"
+          :label="item.key"
+          :value="item.value"
+        />
+      </el-select>
+      <el-input
+        v-model="condition.url"
+        style="width: 200px; margin-right: 60px"
+        placeholder="页面路径查询"
+        @change="searchData()"
+      />
+      <el-input
+        v-model="condition.sendUrl"
+        style="width: 200px; margin-right: 80px"
+        placeholder="请求路径查询"
+        @change="searchData()"
+      />
+      <div class="time">
+        <el-input
+          v-model="startTime"
+          type="number"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="endTime"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+        <span>毫秒</span>
+      </div>
+
       <el-select
-        v-model="curSuccess"
+        v-model="condition.success"
         class="m-2"
         placeholder="Select"
-        style="float: left; margin-left: 10px; width: 120px"
-        ><!-- 状态选择 -->
-        <el-option v-for="item in successOption" :key="item" :value="item" />
+        style="width: 80px"
+        @change="searchData()"
+      >
+        <el-option
+          v-for="item in successOption"
+          :key="item.key"
+          :value="item.value"
+          :label="item.key"
+        />
       </el-select>
-      <el-date-picker
-        style="float: right"
-        v-model="dateSelect"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        type="datetimerange"
-        dateType="time"
-        unlink-panels
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      /><!-- 时间选择 -->
     </div>
-    <div style="text-align: center" class="errorList">
-      <el-table :data="httpData" style="width: 100%; text-align: left">
-        <el-table-column fixed prop="log_id" label="日志编号" width="80" />
-        <el-table-column prop="time" label="时间" width="150" />
-        <el-table-column prop="url" label="页面路径" width="240" />
-        <el-table-column prop="send_url" label="请求路径" width="240" />
-        <el-table-column prop="res_time" label="响应时间(ms)" width="110" />
-        <el-table-column prop="status" label="状态码" width="100" />
-        <el-table-column prop="success" label="成功" width="100" />
-        <el-table-column prop="way" label="方式" width="100" />
-        <el-table-column prop="res_body" label="返回" />
+    <div class="list">
+      <el-table :data="showData.logs" size="large">
+        <el-table-column prop="time" label="请求时间" width="180" />
+        <el-table-column prop="url" label="页面路径" width="260" />
+        <el-table-column prop="sendUrl" label="请求路径" width="320" />
+        <el-table-column prop="resTime" label="响应时间" width="100" />
+        <el-table-column prop="status" label="状态码" width="90" />
+        <el-table-column prop="success" label="成功" width="80" />
+        <el-table-column prop="way" label="请求方法" width="90" />
+        <el-table-column prop="resBody" label="返回信息" />
       </el-table>
     </div>
     <!-- 数据显示 -->
-    <div class="demo-pagination-block">
+    <div class="pagination">
       <el-pagination
-        v-model:currentPage="currentPage1"
-        v-model:page-size="pageSize"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
+        v-model:currentPage="showData.page"
+        :page-size="10"
         layout="prev, pager, next, jumper"
-        style="margin: auto"
-        :total="length1"
-        @current-change="handleCurrentChange"
-      /><!-- 分页 -->
+        :total="showData.total"
+        @current-change="searchData"
+      />
     </div>
 
     ><!-- 筛选列表 -->
@@ -64,99 +91,111 @@
 
 <script setup lang="ts">
 import { reqHttp } from '@/api/index'
-import { HTTPLogShow } from '@/interface/index'
-import { ref, onMounted, watch } from 'vue'
-import Search from './components/Search.vue'
-let curSuccess = ref() //当前错误类型
-let small = ref(false)
-let background = ref(false)
-let disabled = ref(false)
-let currentPage1 = ref(1)
-let pageSize = ref(10)
-let length1 = ref() //展示数据的长度
-let dateSelect = ref() //挑选的时间段
-let WebIdOption = ref() as any //该用户所有网站ID
-let curWebId = ref() //当前网站ID
-let httpData = ref()
-let curReqOption = ref() //当前选择的查询条件
-let successOption = ['成功/失败', '成功', '失败']
-let stateList = ['全部', '200', '300', '400', '500']
-let showSet = ref(false)
-let curReqCondition = ref({
+import { ref, watch, reactive, computed } from 'vue'
+import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+import { useWebStore } from '@/store'
+import { ElMessage } from 'element-plus'
+const webStore = useWebStore()
+const showData = reactive({
+  logs: [] as any[],
+  total: 0,
+  page: 1,
+  size: 10,
+})
+const timeIndex = ref(2)
+const startTime = ref('')
+const endTime = ref('')
+let condition = reactive({
+  time: computed(() => {
+    const [startTime, endTime] = getBothTime(timeIndex.value)
+    console.log(startTime + '_' + endTime)
+    return startTime + '_' + endTime
+  }),
   url: '',
-  time: '',
+  resTime: computed(() => {
+    const start = startTime.value
+    const end = endTime.value
+    if (start == '' && end == '') return ''
+    else if (start == '') {
+      return '0_' + parseInt(end)
+    } else if (end == '') {
+      return parseInt(start) + '_10000'
+    } else {
+      return parseInt(start) + '_' + parseInt(end)
+    }
+  }),
+  sendUrl: '',
   success: '',
-  res_time: '',
-  send_url: '',
-}) as any //当前选择的查询条件
-curWebId.value = 1 //初始化当前网站id
-curSuccess.value = '成功/失败' //默认错误类型
-const getWebOption = () => {
-  WebIdOption.value = ['1', '2', '3']
-} //当前用户的网站列表从pinia拿
-const handleCurrentChange = (val: number) => {
-  currentPage1.value = val
-  reqHttpData(val)
-} //改变页数
-const switchStamp = (nS: any) => {
-  return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/, ' ')
-} //时间搓转换
-const showSelectFrom = () => {
-  showSet.value = true
-} //显示性能指标筛选
-const searchData = () => {
-  currentPage1.value = 1
-  reqHttpData(currentPage1.value)
-}
-const reqHttpData = (page: number) => {
+})
+const searchData = (page = 1) => {
   reqHttp({
-    webId: curWebId.value,
-    page: page,
-    condition: curReqCondition,
-  }).then((res) => {
-    httpData.value = res.data.logs
-    length1.value = res.data.total
-    httpData.value.map(function (element: any) {
-      let arr: HTTPLogShow = element
-      arr.time = switchStamp(arr.time)
-      return element
-    })
+    webId: webStore.webId,
+    page,
+    condition,
+  }).then(({ code, data }) => {
+    if (code == 0) {
+      showData.logs = data.logs.map((val) => {
+        return {
+          ...val,
+          time: formatTime(val.time),
+          resTime: formatMS(val.resTime),
+          success: val.success === 0 ? '成功' : '失败',
+        }
+      })
+      showData.total = data.total
+      showData.page = page
+    } else {
+      ElMessage({
+        message: '网络异常',
+        type: 'warning',
+      })
+    }
   })
-} //请求数据
-reqHttpData(1)
-getWebOption()
-onMounted(() => {
-  //console.log(newData);
-})
-watch(dateSelect, (newVal) => {
-  let startTime = new Date(newVal[0]).getTime()
-  let endTime = new Date(newVal[1]).getTime()
-  let time = startTime + '_' + endTime
-  curReqCondition._rawValue.time = time
-  currentPage1.value = 1
-  reqHttpData(currentPage1.value)
-})
-//监听日期  变化后更新数据为时间戳
-watch(curWebId, () => {
-  currentPage1.value = 1
-  reqHttpData(currentPage1.value)
-})
-watch(curSuccess, (newVal) => {
-  console.log(newVal)
-  switch (newVal) {
-    case '成功':
-      curReqCondition._rawValue.success = true
-      break
-    case '成功/失败':
-      curReqCondition._rawValue.success = ''
-      break
-    case '失败':
-      curReqCondition._rawValue.success = false
-      break
+}
+let successOption = [
+  { key: '全部', value: '' },
+  { key: '成功', value: '0' },
+  { key: '失败', value: '1' },
+]
+searchData()
+
+watch(
+  () => webStore.webId,
+  () => {
+    searchData()
   }
-  currentPage1.value = 1
-  reqHttpData(currentPage1.value)
-})
+)
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  h1 {
+    font-size: 22px;
+    padding: 10px 0;
+    text-align: center;
+    background: #eee;
+  }
+  .filter {
+    height: 45px;
+    .time {
+      display: inline-block;
+      margin-right: 50px;
+      span {
+        line-height: 45px;
+      }
+    }
+  }
+  .list {
+    flex: 1;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+</style>

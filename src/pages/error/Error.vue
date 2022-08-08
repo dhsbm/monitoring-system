@@ -1,168 +1,183 @@
 <template>
-  <div>
-    <Search v-model:url="curReqCondition.message" @myclick="searchData" />
+  <div class="container">
+    <h1>异常日志</h1>
     <!-- 搜索框 -->
-    <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
+    <div class="filter">
       <el-select
-        v-model="curWebId"
+        v-model="timeIndex"
         class="m-2"
         placeholder="Select"
-        style="float: left; width: 150px"
+        style="width: 120px; margin-right: 60px"
       >
-        <el-option v-for="item in WebIdOption" :key="item" :value="item" /> </el-select
-      ><!-- 网站id选择 -->
+        <el-option
+          v-for="item in timeOption"
+          :key="item.value"
+          :label="item.key"
+          :value="item.value"
+        />
+      </el-select>
+
+      <el-input
+        v-model="condition.url"
+        style="width: 200px; margin-right: 60px"
+        placeholder="路径查询"
+        @change="searchData()"
+      />
+
+      <!-- 错误类型选择 -->
       <el-select
-        v-model="curErrorKind"
+        v-model="condition.type"
         class="m-2"
         placeholder="Select"
-        style="float: left; margin-left: 10px; width: 100px"
+        style="margin-right: 50px; width: 100px"
       >
-        <el-option v-for="item in errorOption" :key="item" :value="item" /> </el-select
-      ><!-- 错误类型选择 -->
-      <el-input style="width: 200px; margin-left: 20px" v-model="curUrl" placeholder="路径查询" />
-      <el-date-picker
-        style="float: right"
-        v-model="dateSelect"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        type="datetimerange"
-        dateType="time"
-        unlink-panels
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      /><!-- 时间选择 -->
+        <el-option
+          v-for="item in typeOption"
+          :key="item.key"
+          :label="item.key"
+          :value="item.value"
+        />
+      </el-select>
+
+      <el-input
+        v-model="condition.message"
+        style="width: 220px; margin-right: 20px"
+        placeholder="异常信息查询"
+        @change="searchData()"
+      />
     </div>
-    <div class="errorList">
-      <el-table :data="errorData" style="width: 100%; text-align: left">
-        <el-table-column fixed prop="log_id" label="日志编号" width="80" />
-        <el-table-column prop="time" label="时间" width="150" />
-        <el-table-column prop="url" label="路径" width="150" />
-        <el-table-column prop="type" label="类型" width="100" />
-        <el-table-column prop="message" label="信息" width="360" />
-        <el-table-column prop="selector" label="选择器" width="240" />
-        <el-table-column prop="stack" label="原因" /> </el-table
-      ><!-- 数据显示 -->
+    <div class="list">
+      <el-table :data="showData.logs" size="large">
+        <el-table-column prop="time" label="时间" width="180" />
+        <el-table-column prop="url" label="路径" width="260" />
+        <el-table-column prop="type" label="类型" width="150" />
+        <el-table-column prop="message" label="报错信息" width="300" />
+        <el-table-column prop="stack" label="堆栈" />
+      </el-table>
     </div>
-    <div class="demo-pagination-block">
+    <div class="pagination">
       <el-pagination
-        v-model:currentPage="currentPage1"
-        v-model:page-size="pageSize"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
+        v-model:currentPage="showData.page"
+        :page-size="10"
         layout="prev, pager, next, jumper"
-        style="margin: auto"
-        :total="length1"
-        @current-change="handleCurrentChange"
-      /><!-- 分页 -->
+        :total="showData.total"
+        @current-change="searchData"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Type, errLogShow, ErrLog } from '@/interface/index'
+import { Type } from '@/interface'
 import { reqErr } from '@/api/index'
-import { ref, onMounted, watch } from 'vue'
-import Search from './components/Search.vue'
-let curErrorKind = ref() //当前错误类型
-let small = ref(false)
-let background = ref(false)
-let disabled = ref(false)
-let currentPage1 = ref(1)
-let pageSize = ref(10)
-let length1 = ref() //展示数据的长度
-let data1 = ref() //挑选的时间段
-let WebIdOption = ref() //该用户所有网站ID
-let curWebId = ref() //当前网站ID
-let curUrl = ref() //当前的路径
-let errorData = ref()
-let dateSelect = ref()
-let curReqCondition = ref({
+import { ref, watch, reactive, computed } from 'vue'
+import { useWebStore } from '@/store'
+import { ElMessage } from 'element-plus'
+import { getBothTime, timeOption, formatTime } from '@/common'
+const webStore = useWebStore()
+
+const showData = reactive({
+  logs: [] as any[],
+  total: 0,
+  page: 1,
+  size: 10,
+})
+
+//当前选择的查询条件
+const timeIndex = ref(2)
+let condition = reactive({
+  time: computed(() => {
+    const [startTime, endTime] = getBothTime(timeIndex.value)
+    return startTime + '_' + endTime
+  }),
   url: '',
-  time: '',
-  type: 'SCRIPT_JS_WHITE_HTTP',
+  type: '',
   message: '',
-}) as any //当前选择的查询条件
-let errorOption = ['全部', 'JS', '白屏', 'SRC', 'HTTP']
-curWebId.value = 1 //初始化当前网站iD
-curErrorKind.value = '全部' //默认错误类型
-const getWebOption = () => {
-  WebIdOption.value = ['1', '2', '3']
-} //当前用户的网站列表从pinia拿
-const handleCurrentChange = (val: number) => {
-  currentPage1.value = val
-  reqErrData(val)
-} //改变页数
-const switchStamp = (nS: any) => {
-  return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/, ' ')
-} //时间搓转换
-const searchData = () => {
-  currentPage1.value = 1
-  reqErrData(1)
-}
-const reqErrData = (page: number) => {
+})
+
+let typeOption = [
+  { key: '全部', value: '' },
+  { key: '脚本异常', value: '0' },
+  { key: '资源异常', value: '1' },
+  { key: '接口异常', value: '2' },
+  { key: '白屏异常', value: '3' },
+]
+
+const searchData = (page = 1) => {
   reqErr({
-    webId: curWebId.value,
-    page: page,
-    condition: curReqCondition._rawValue,
-  }).then((res) => {
-    console.log(res)
-    errorData.value = res.data.logs
-    length1.value = res.data.total
-    errorData.value.map(function (element: any) {
-      let index: number = element.type
-      let arr: errLogShow = element
-      arr.time = switchStamp(arr.time)
-      arr.type = Type[index]
-      return element
-    })
+    webId: webStore.webId,
+    page,
+    condition,
+  }).then(({ code, data }) => {
+    if (code == 0) {
+      showData.logs = data.logs.map((val) => {
+        return {
+          ...val,
+          type: getType(val.type),
+          time: formatTime(val.time),
+        }
+      })
+      showData.total = data.total
+      showData.page = page
+    } else {
+      ElMessage({
+        message: '网络异常',
+        type: 'warning',
+      })
+    }
   })
-} //请求数据
-reqErrData(1)
-getWebOption()
-onMounted(() => {})
-watch(curWebId, () => {
-  currentPage1.value = 1
-  reqErrData(currentPage1.value)
-})
-//当前网站id监听  变化后更新数据
-watch(dateSelect, (newVal) => {
-  let startTime = new Date(newVal[0]).getTime()
-  let endTime = new Date(newVal[1]).getTime()
-  let time = startTime + '_' + endTime
-  curReqCondition._rawValue.time = time
-  currentPage1.value = 1
-  reqErrData(currentPage1.value)
-})
-//监听日期  变化后更新数据
-watch(curErrorKind, (newVal) => {
-  switch (newVal) {
-    case '全部':
-      curReqCondition._rawValue.type = 'SRC_JS_White_HTTP'
-      break
-    case 'JS':
-      curReqCondition._rawValue.type = 'JS'
-      break
-    case '白屏':
-      curReqCondition._rawValue.type = 'White'
-      break
-    case 'HTTP':
-      curReqCondition._rawValue.type = 'HTTP'
-      break
-    case 'SRC':
-      curReqCondition._rawValue.type = 'SRC'
-      break
+}
+
+const getType = (type: Type) => {
+  switch (type) {
+    case 0:
+      return '脚本异常'
+    case 1:
+      return '资源异常'
+    case 2:
+      return '接口异常'
+    case 3:
+      return '白屏异常'
   }
-  currentPage1.value = 1
-  reqErrData(currentPage1.value)
-})
-//监听异常类型 变化更新数据
-watch(curUrl, (newVal) => {
-  console.log(newVal)
-  curReqCondition._rawValue.url = newVal
-  currentPage1.value = 1
-  reqErrData(currentPage1.value)
-})
+}
+searchData()
+//请求数据
+watch(
+  () => webStore.webId,
+  () => searchData()
+)
+watch(
+  () => condition.type,
+  () => searchData()
+)
+watch(
+  () => condition.time,
+  () => searchData()
+)
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  h1 {
+    font-size: 22px;
+    padding: 10px 0;
+    text-align: center;
+    background: #eee;
+  }
+  .filter {
+    height: 45px;
+  }
+  .list {
+    flex: 1;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+</style>

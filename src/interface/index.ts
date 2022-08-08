@@ -37,15 +37,15 @@ export interface BehLog extends Log {
 }
 // 请求日志
 export interface HTTPLog extends Log {
-  res_time: number
-  send_url: string
+  resTime: number
+  sendUrl: string
   way: string
-  success: boolean
+  success: number
   status: number // 状态码
-  // req_header: string
-  // req_params: string
-  // res_header: string
-  res_body: string
+  // reqHeader: string
+  // reqParams: string
+  // resHeader: string
+  resBody: string
 }
 
 // 日志类别枚举
@@ -127,7 +127,7 @@ export interface WebInfo {
 }
 //Errlogs展示类型
 export interface Logs {
-  log_id: number
+  logId: number
   kind: Kind
   time: String // 开始时间
   url: string // 页面路径
@@ -158,13 +158,13 @@ export interface BehLogShow extends Logs {
 }
 // 请求日志
 export interface HTTPLogShow extends Logs {
-  res_time: number
-  send_url: string
+  resTime: number
+  sendUrl: string
   way: string
   success: boolean
   status: number // 状态码
-  // req_header: string
-  // req_params: string
-  // res_header: string
-  res_body: string
+  // reqHeader: string
+  // reqParams: string
+  // resHeader: string
+  resBody: string
 }

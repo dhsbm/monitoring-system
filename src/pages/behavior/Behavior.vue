@@ -1,132 +1,189 @@
 <template>
-  <div>
-    <Search ref="se" v-model:url="curReqCondition.url" @myclick="searchData" />
-    <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
-      <el-select
-        v-model="curWebId"
-        class="m-2"
-        placeholder="Select"
-        style="float: left; width: 150px"
-      >
-        <el-option v-for="item in WebIdOption" :key="item" :value="item" />
-      </el-select>
-      <el-input style="width: 200px; margin-left: 20px" v-model="curIp" placeholder="ip查询" />
-      <el-date-picker
-        style="float: right"
-        v-model="dateSelect"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        type="datetimerange"
-        dateType="time"
-        unlink-panels
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      />
+  <div class="container">
+    <h1>用户行为日志</h1>
+    <div class="filter">
+      <div>
+        <el-select
+          v-model="timeIndex"
+          class="m-2"
+          placeholder="Select"
+          style="width: 120px"
+          @change="searchData()"
+        >
+          <el-option
+            v-for="item in timeOption"
+            :key="item.value"
+            :label="item.key"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+
+      <div>
+        <el-input
+          v-model="condition.url"
+          style="width: 200px"
+          placeholder="路径查询"
+          @change="searchData()"
+        />
+      </div>
+
+      <div class="duration">
+        <el-input
+          v-model="startDuration"
+          style="width: 70px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="endDuration"
+          type="number"
+          style="width: 70px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+        <span>秒</span>
+      </div>
+      <div>
+        <el-input
+          v-model="condition.ip"
+          type="number"
+          style="width: 140px"
+          placeholder="ip查询"
+          @change="searchData()"
+        />
+      </div>
+
+      <div></div>
     </div>
-    <div class="errorList">
-      <el-table :data="behData" style="width: 100%; text-align: left">
-        <el-table-column fixed prop="log_id" label="日志编号" width="80" />
-        <el-table-column prop="time" label="时间" width="150" />
-        <el-table-column prop="url" label="路径" width="360" />
-        <el-table-column prop="duration" label="持续时间(ms)" width="240" />
-        <el-table-column prop="ip" label="ip" width="240" />
+    <div class="list">
+      <el-table :data="showData.logs" size="large">
+        <el-table-column prop="time" label="时间" />
+        <el-table-column prop="url" label="路径" />
+        <el-table-column prop="duration" label="停留时间(ms)" />
+        <el-table-column prop="ip" label="ip" />
         <el-table-column prop="area" label="地区" />
       </el-table>
     </div>
-    <div class="demo-pagination-block">
+    <div class="pagination">
       <el-pagination
-        v-model:currentPage="currentPage1"
-        v-model:page-size="pageSize"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
+        v-model:currentPage="showData.page"
+        :page-size="10"
         layout="prev, pager, next, jumper"
-        style="margin: auto"
-        :total="length1"
-        @current-change="handleCurrentChange"
+        :total="showData.total"
+        @current-change="searchData"
       />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { Area, BehLogShow } from '@/interface/index'
+import { Area } from '@/interface/index'
 import { reqBeh } from '@/api/index'
-import { ref, onMounted, watch } from 'vue'
-import Search from './components/Search.vue'
-let curErrorKind = ref() //当前错误类型
-let small = ref(false)
-let background = ref(false)
-let disabled = ref(false)
-let currentPage1 = ref(1)
-let pageSize = ref(10)
-let length1 = ref() //展示数据的长度
-let dateSelect = ref() //挑选的时间段
-let WebIdOption = ref() as any //该用户所有网站ID
-let curWebId = ref() //当前网站ID
-let behData = ref()
-let curReqOption = ref() //当前选择的查询条件
-let curIp = ref()
-let curReqCondition = ref({
+import { ref, watch, reactive, computed } from 'vue'
+import { useWebStore } from '@/store'
+import { ElMessage } from 'element-plus'
+import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+
+const webStore = useWebStore()
+const showData = reactive({
+  logs: [] as any[],
+  total: 0,
+  page: 1,
+  size: 10,
+})
+//当前选择的查询条件
+const timeIndex = ref(2)
+const startDuration = ref('')
+const endDuration = ref('')
+let condition = reactive({
+  time: computed(() => {
+    const [startTime, endTime] = getBothTime(timeIndex.value)
+    return startTime + '_' + endTime
+  }),
   url: '',
-  time: '',
+  duration: computed(() => {
+    const start = startDuration.value
+    const end = endDuration.value
+    if (start == '' && end == '') return ''
+    else if (start == '') {
+      return '0_' + parseInt(end) * 1000
+    } else if (end == '') {
+      return parseInt(start) * 1000 + '_86400000'
+    } else {
+      return parseInt(start) * 1000 + '_' + parseInt(end) * 1000
+    }
+  }),
   ip: '',
-  duration: '',
-}) as any //当前选择的查询条件
-curWebId.value = 1 //初始化当前网站id
-curErrorKind.value = '全部' //默认错误类型
-const getWebOption = () => {
-  WebIdOption.value = ['1', '2', '3']
-} //当前用户的网站列表从pinia拿
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-  currentPage1.value = val
-  reqBehData(val)
-} //改变页数
-const switchStamp = (nS: any) => {
-  return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/, ' ')
-} //时间搓转换
-const searchData = () => {
-  currentPage1.value = 1
-  reqBehData(1)
-}
-const reqBehData = (page: number) => {
+})
+const searchData = (page = 1) => {
   reqBeh({
-    webId: curWebId.value,
-    page: page,
-    condition: curReqCondition,
-  }).then((res) => {
-    console.log(res)
-    behData.value = res.data.logs
-    length1.value = res.data.total
-    behData.value.map(function (element: any) {
-      let index: number = element.area
-      let arr: BehLogShow = element
-      arr.time = switchStamp(arr.time)
-      arr.area = Area[index]
-      return element
-    })
+    webId: webStore.webId,
+    page,
+    condition,
+  }).then(({ code, data }) => {
+    if (code == 0) {
+      showData.logs = data.logs.map((val) => {
+        return {
+          ...val,
+          time: formatTime(val.time),
+          area: Area[val.area],
+          duration: formatMS(val.duration),
+        }
+      })
+      showData.total = data.total
+      showData.page = page
+    } else {
+      ElMessage({
+        message: '网络异常',
+        type: 'warning',
+      })
+    }
   })
-} //请求数据
-reqBehData(1)
-getWebOption()
-onMounted(() => {})
-watch(dateSelect, (newVal) => {
-  let startTime = new Date(newVal[0]).getTime()
-  let endTime = new Date(newVal[1]).getTime()
-  let time = startTime + '_' + endTime
-  curReqCondition._rawValue.time = time
-  currentPage1.value = 1
-  reqBehData(currentPage1.value)
-})
-//监听日期  变化后更新数据
-watch(curWebId, () => {
-  currentPage1.value = 1
-  reqBehData(currentPage1.value)
-})
-watch(curIp, (newVal) => {
-  curReqCondition._rawValue.ip = newVal
-  searchData()
-})
+}
+searchData()
+watch(
+  () => webStore.webId,
+  () => {
+    searchData()
+  }
+)
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  h1 {
+    font-size: 22px;
+    padding: 10px 0;
+    text-align: center;
+    background: #eee;
+  }
+  .filter {
+    height: 45px;
+    display: flex;
+    & > div {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .duration {
+      display: inline-block;
+      span {
+        line-height: 45px;
+      }
+    }
+  }
+  .list {
+    flex: 1;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+</style>

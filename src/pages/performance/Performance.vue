@@ -1,58 +1,148 @@
 <template>
-  <div>
-    <Search v-model:url="curReqCondition.url" @myclick="searchData" /><!-- 搜索框 -->
-    <div class="block" style="margin: 10px 10px 10px; height: 30px; border: 1px black">
+  <div class="container">
+    <h1>网站性能日志</h1>
+    <div class="filter">
       <el-select
-        v-model="curWebId"
+        v-model="timeIndex"
         class="m-2"
         placeholder="Select"
-        style="float: left; width: 150px"
+        style="width: 120px; margin-right: 60px"
       >
-        <el-option v-for="item in WebIdOption" :key="item" :value="item" /> </el-select
-      ><!-- 网站id选择 -->
+        <el-option
+          v-for="item in timeOption"
+          :key="item.value"
+          :label="item.key"
+          :value="item.value"
+        />
+      </el-select>
 
-      <div class="set" @click="showSelectFrom"></div>
-      <!-- 设置按钮 弹出选项列表 -->
-      <el-date-picker
-        style="float: right"
-        v-model="dateSelect"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        type="datetimerange"
-        dateType="time"
-        unlink-panels
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      /><!-- 时间选择器 -->
+      <el-input
+        v-model="condition.url"
+        style="width: 200px; margin-right: 40px"
+        placeholder="路径查询"
+        @change="searchData()"
+      />
+
+      <div class="range">
+        <el-input
+          v-model="range.dclStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.dclEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <div class="range">
+        <el-input
+          v-model="range.fpStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.fpEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <div class="range">
+        <el-input
+          v-model="range.fcpStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.fcpEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <div class="range">
+        <el-input
+          v-model="range.lcpStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.lcpEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <div class="range">
+        <el-input
+          v-model="range.dclStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.dclEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <div class="range">
+        <el-input
+          v-model="range.lStart"
+          style="width: 60px"
+          placeholder="起始"
+          @change="searchData()"
+        />
+        <span>-</span>
+        <el-input
+          v-model="range.lEnd"
+          type="number"
+          style="width: 60px"
+          placeholder="结束"
+          @change="searchData()"
+        />
+      </div>
+      <!-- <div class="set" @click="showSelectFrom"></div> -->
     </div>
-    <div class="errorList">
-      <el-table :data="perData" style="width: 100%; text-align: left">
-        <el-table-column fixed prop="log_id" label="日志编号" width="80" />
-        <el-table-column prop="time" label="时间" width="150" />
-        <el-table-column prop="url" label="路径" width="360" />
-        <el-table-column prop="dns" label="DNS(ms)" width="120" />
-        <el-table-column prop="fcp" label="FCP(ms)" width="120" />
-        <el-table-column prop="fp" label="FP(ms)" width="120" />
-        <el-table-column prop="lcp" label="LCP(ms)" width="120" />
-        <el-table-column prop="l" label="Onload(ms)" />
+    <div class="list">
+      <el-table :data="showData.logs" size="large">
+        <el-table-column prop="time" label="时间" width="180" />
+        <el-table-column prop="url" label="路径" width="260" />
+        <el-table-column prop="dns" label="DNS" />
+        <el-table-column prop="fp" label="FP" />
+        <el-table-column prop="fcp" label="FCP" />
+        <el-table-column prop="lcp" label="LCP" />
+        <el-table-column prop="l" label="Dom Ready" />
+        <el-table-column prop="l" label="Load" />
       </el-table>
     </div>
-    <!-- 数据 -->
-    <div class="demo-pagination-block">
+    <div class="pagination">
       <el-pagination
-        v-model:currentPage="currentPage1"
-        v-model:page-size="pageSize"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
+        v-model:currentPage="showData.page"
+        :page-size="10"
         layout="prev, pager, next, jumper"
-        style="margin: auto"
-        :total="length1"
-        @current-change="handleCurrentChange"
+        :total="showData.total"
+        @current-change="searchData"
       />
     </div>
-    <!-- 分页 -->
-    <el-dialog
+    <!-- <el-dialog
       title="筛选规则"
       v-model="showSet"
       :before-close="setClose"
@@ -62,109 +152,132 @@
         v-model:condition="curReqCondition"
         @myclick="searchData"
       ></select-list> </el-dialog
-    ><!-- 筛选列表 -->
+    >筛选列表 -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { Area, PerLogShow } from '@/interface/index'
 import { reqPer } from '@/api/index'
-import { ref, onMounted, watch } from 'vue'
-import Search from './components/Search.vue'
-import SelectList from './components/SelectList.vue'
-let curErrorKind = ref() //当前错误类型
-let small = ref(false)
-let background = ref(false)
-let disabled = ref(false)
-let currentPage1 = ref(1)
-let pageSize = ref(10)
-let length1 = ref() //展示数据的长度
-let dateSelect = ref() //挑选的时间段
-let WebIdOption = ref() as any //该用户所有网站ID
-let curWebId = ref() //当前网站ID
-let perData = ref() //显示的数据
-let showSet = ref(false)
-let curReqCondition = ref({
-  url: '',
-  time: '',
-  dns: '',
-  fp: '',
-  fcp: '',
-  lcp: '',
-  dcl: '',
-  l: '',
-}) as any //当前选择的查询条件
-curWebId.value = 1 //初始化当前网站id
-curErrorKind.value = '全部' //默认错误类型
-const getWebOption = () => {
-  WebIdOption.value = ['1', '2', '3']
-} //当前用户的网站列表从pinia拿
-const handleCurrentChange = (val: number) => {
-  currentPage1.value = val
-  reqPerData(val)
-} //改变页数
-const searchData = () => {
-  showSet.value = false
-  currentPage1.value = 1
-  reqPerData(1)
+import { ref, Ref, watch, reactive, computed } from 'vue'
+import { useWebStore } from '@/store'
+import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+import { ElMessage } from 'element-plus'
+
+const webStore = useWebStore()
+const showData = reactive({
+  logs: [] as any[],
+  total: 0,
+  page: 1,
+  size: 10,
+})
+//当前选择的查询条件
+const timeIndex = ref(2)
+const range = reactive({
+  dnsStart: '',
+  dnsEnd: '',
+  fpStart: '',
+  fpEnd: '',
+  fcpStart: '',
+  fcpEnd: '',
+  lcpStart: '',
+  lcpEnd: '',
+  dclStart: '',
+  dclEnd: '',
+  lStart: '',
+  lEnd: '',
+})
+const createRangeFun = (start: string, end: string) => {
+  return () => {
+    if (start == '' && end == '') return ''
+    else if (start == '') {
+      return '0_' + parseInt(end)
+    } else if (end == '') {
+      return parseInt(start) + '_10000'
+    } else {
+      return parseInt(start) + '_' + parseInt(end)
+    }
+  }
 }
-const switchStamp = (nS: any) => {
-  return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/, ' ')
-} //时间搓转换
-const setClose = () => {
-  showSet.value = false
-} //关闭设置弹出框
-const showSelectFrom = () => {
-  showSet.value = true
-} //显示性能指标筛选
-const reqPerData = (page: number) => {
+let condition = reactive({
+  time: computed(() => {
+    const [startTime, endTime] = getBothTime(timeIndex.value)
+    return startTime + '_' + endTime
+  }),
+  url: '',
+  dns: computed(createRangeFun(range.dnsStart, range.dnsEnd)),
+  fp: computed(createRangeFun(range.fpStart, range.fpEnd)),
+  fcp: computed(createRangeFun(range.fcpStart, range.fcpEnd)),
+  lcp: computed(createRangeFun(range.lcpStart, range.lcpEnd)),
+  dcl: computed(createRangeFun(range.dclStart, range.dclEnd)),
+  l: computed(createRangeFun(range.lStart, range.lEnd)),
+})
+
+const searchData = (page = 1) => {
   reqPer({
-    webId: curWebId.value,
-    page: page,
-    condition: curReqCondition.value,
-  }).then((res) => {
-    console.log(res)
-    perData.value = res.data.logs
-    length1.value = res.data.total
-    perData.value.map(function (element: any) {
-      let arr: PerLogShow = element
-      arr.time = switchStamp(arr.time)
-      return element
-    })
+    webId: webStore.webId,
+    page,
+    condition,
+  }).then(({ code, data }) => {
+    if (code == 0) {
+      showData.logs = data.logs.map((val) => {
+        return {
+          ...val,
+          time: formatTime(val.time),
+          dns: formatMS(val.dns),
+          fp: formatMS(val.fp),
+          fcp: formatMS(val.fcp),
+          lcp: formatMS(val.lcp),
+          dcl: formatMS(val.dcl),
+          l: formatMS(val.l),
+        }
+      })
+      showData.total = data.total
+      showData.page = page
+    } else {
+      ElMessage({
+        message: '网络异常',
+        type: 'warning',
+      })
+    }
   })
-} //请求数据
-reqPerData(1)
-getWebOption()
-onMounted(() => {
-  //console.log(newData);
-})
-watch(dateSelect, (newVal) => {
-  let startTime = new Date(newVal[0]).getTime()
-  let endTime = new Date(newVal[1]).getTime()
-  let time = startTime + '_' + endTime
-  curReqCondition._rawValue.time = time
-  currentPage1.value = 1
-  reqPerData(currentPage1.value)
-})
-//监听日期  变化后更新数据为时间戳
-watch(curWebId, () => {
-  currentPage1.value = 1
-  reqPerData(currentPage1.value)
-})
-//当前网站id监听  变化后更新数据
+}
+searchData()
+watch(
+  () => webStore.webId,
+  () => searchData()
+)
 </script>
 
 <style lang="scss" scoped>
-.set {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  margin-left: 20px;
-  background-image: url('@/assets/set.svg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  -webkit-background-size: cover;
-  -o-background-size: cover;
-  background-position: center 0;
+.container {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  h1 {
+    font-size: 22px;
+    padding: 10px 0;
+    text-align: center;
+    background: #eee;
+  }
+  .filter {
+    height: 45px;
+    display: flex;
+    align-items: center;
+    .range {
+      flex: 1;
+      span {
+        line-height: 45px;
+      }
+    }
+  }
+  .list {
+    flex: 1;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>

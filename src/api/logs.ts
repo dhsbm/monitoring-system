@@ -117,9 +117,9 @@ interface HttpParams {
   condition?: {
     url?: string
     time?: string
-    res_time?: string
-    success?: boolean
-    send_url?: string
+    resTime?: string
+    success?: string
+    sendUrl?: string
   }
 }
 interface HttpResponse extends CommonResponse {

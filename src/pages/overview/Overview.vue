@@ -4,7 +4,7 @@
     <div class="mainData">
       <div class="mainData-line">
         <div class="mainData-left-line">
-          <process
+          <Progress
             :val="score"
             :width="200"
             :strokewidth="20"
@@ -14,7 +14,7 @@
           />
         </div>
         <div class="mainData-right-line">
-          <process
+          <Progress
             :val="nums.jsErr"
             :width="130"
             :strokewidth="10"
@@ -23,7 +23,7 @@
             :color="color.jsErr"
             class="item"
           />
-          <process
+          <Progress
             :val="nums.srcErr"
             :width="130"
             :strokewidth="10"
@@ -32,7 +32,7 @@
             :color="color.srcErr"
             class="item"
           />
-          <process
+          <Progress
             :val="nums.httpErr"
             :width="130"
             :strokewidth="10"
@@ -41,7 +41,7 @@
             :color="color.httpErr"
             class="item"
           />
-          <process
+          <Progress
             :val="nums.whiteErr"
             :width="130"
             :strokewidth="10"
@@ -56,7 +56,7 @@
     <span class="title">核心数据</span>
     <div class="heathyData">
       <div class="line_1">
-        <LineVue
+        <Line
           :title-option="`异常数据表`"
           :x-axis-option="showData.errX"
           :y-axis-option="yAxis_err"
@@ -65,8 +65,8 @@
           :index="0"
           :time-index="showData.erri"
           @change-x="changeX"
-        ></LineVue>
-        <LineVue
+        ></Line>
+        <Line
           :title-option="`网页性能表`"
           :x-axis-option="showData.perX"
           :y-axis-option="yAxis_per"
@@ -75,10 +75,10 @@
           :index="0"
           :time-index="showData.peri"
           @change-x="changeX"
-        ></LineVue>
+        ></Line>
       </div>
       <div class="line_2">
-        <LineVue
+        <Line
           :title-option="`请求数图表`"
           :x-axis-option="showData.http1X"
           :y-axis-option="yAxis_http1"
@@ -87,8 +87,8 @@
           :index="0"
           :time-index="showData.http1i"
           @change-x="changeX"
-        ></LineVue>
-        <LineVue
+        ></Line>
+        <Line
           :title-option="`请求时间表`"
           :x-axis-option="showData.http2X"
           :y-axis-option="yAxis_http2"
@@ -97,12 +97,12 @@
           :index="1"
           :time-index="showData.http2i"
           @change-x="changeX"
-        ></LineVue>
+        ></Line>
       </div>
     </div>
     <span class="title">用户行为数据</span>
     <div class="userData">
-      <LineVue
+      <Line
         :title-option="`用户访问量`"
         :x-axis-option="showData.user1X"
         :y-axis-option="yAxis_user1"
@@ -111,8 +111,8 @@
         :index="0"
         :time-index="showData.user1i"
         @change-x="changeX"
-      ></LineVue>
-      <LineVue
+      ></Line>
+      <Line
         :title-option="`用户停留时间`"
         :x-axis-option="showData.user2X"
         :y-axis-option="yAxis_user2"
@@ -121,24 +121,26 @@
         :index="1"
         :time-index="showData.user2i"
         @change-x="changeX"
-      ></LineVue>
+      ></Line>
     </div>
     <div class="mapData">
-      <mapVue :area="showData.area" />
-      <pieVue :item="browser_item" :data="showData.browser"></pieVue>
+      <Map :area="showData.area" />
+      <Pie :item="browser_item" :data="showData.browser"></Pie>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import mapVue from './components/mapVue/index.vue'
-import process from './components/progress/index.vue'
-import LineVue from './components/echarts/line.vue'
-import pieVue from './components//echarts/pie.vue'
+import Map from './components/Map.vue'
+import Progress from './components/Progress.vue'
+import Line from './components/Line.vue'
+import Pie from './components/Pie.vue'
 import { reqAll, reqStat } from '@/api/index'
 import { reactive } from 'vue'
 import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
+import { getEndTime, getTimeRange } from '@/common'
+
 const webstore = useWebStore()
 
 const nums = {
@@ -165,53 +167,6 @@ const color = {
   srcErr: getColor(nums.srcErr),
   httpErr: getColor(nums.httpErr),
   whiteErr: getColor(nums.whiteErr),
-}
-
-const timeRange = [
-  4 * 3600 * 1000, // 4h
-  24 * 3600 * 1000, // 1d
-  7 * 24 * 3600 * 1000, // 7d
-  14 * 24 * 3600 * 1000, // 14d
-  30 * 24 * 3600 * 1000, // 30d
-]
-const timeGap = [
-  15 * 60 * 1000, // 15min
-  2 * 3600 * 1000, // 2h
-  24 * 3600 * 1000, // 1d
-  24 * 3600 * 1000, // 1d
-  2 * 24 * 3600 * 1000, // 2d
-]
-function getEndTime(index: number) {
-  const time = Date.now()
-  const gap = timeGap[index]
-  const r = time % gap
-  return time - r + gap
-}
-function getTimeRange(index: number) {
-  const range = timeRange[index]
-  const gap = timeGap[index]
-  const endTime = getEndTime(index)
-  const res: string[] = []
-  let startTime = endTime - range
-  while (startTime < endTime) {
-    startTime += gap
-    const date = new Date(startTime)
-    let str: string
-    if (index == 0) {
-      str = date.getHours() + ':' + addZero(date.getMinutes())
-    } else if (index == 1) {
-      str = date.getHours() + ':00'
-    } else {
-      str = date.getMonth() + 1 + '-' + date.getDate()
-    }
-    res.push(str!)
-  }
-  return res
-}
-function addZero(s: number | string) {
-  s = s + ''
-  if (s.length < 2) s += '0'
-  return s
 }
 
 const xAxis = getTimeRange(2)
