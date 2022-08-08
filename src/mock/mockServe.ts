@@ -11,7 +11,7 @@ Mock.mock('/mock/user/login', 'post', {
   code: 0,
   message: '登录成功',
   data: {
-    name: '测试用户',
+    name: '管理员',
     user_id: 1,
     token: 'tokentokentokentokentokentoken',
   },
@@ -21,7 +21,7 @@ Mock.mock('/mock/user/register', 'post', {
   code: 0,
   message: '注册成功',
   data: {
-    name: '测试用户',
+    name: '管理员',
     user_id: 1,
     token: 'tokentokentokentokentokentoken',
   },
@@ -32,7 +32,7 @@ Mock.mock('/mock/user/info', 'get', {
   code: 0,
   message: '获取用户信息成功',
   data: {
-    name: '测试用户',
+    name: '管理员',
     user_id: 1,
     token: 'tokentokentokentokentokentoken',
   },
