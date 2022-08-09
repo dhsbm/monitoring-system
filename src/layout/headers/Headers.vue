@@ -21,7 +21,8 @@
     <div class="user">
       <div class="menu">
         <div class="name">{{ userStore.name }}</div>
-        <div class="switch" @click="router.push('/login')">切换用户</div>
+        <div class="item" @click="router.push('/login')">切换用户</div>
+        <div class="item" @click="download">下载脚本</div>
       </div>
       <svg
         t="1659962705300"
@@ -56,6 +57,13 @@ const webStore = useWebStore()
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
+
+const a = document.createElement('a')
+a.href = '/monitoring.js'
+a.download = 'monitoring.js'
+const download = () => {
+  a.click()
+}
 </script>
 
 <style lang="scss" scoped>
@@ -89,7 +97,7 @@ const router = useRouter()
     position: relative;
     & > .menu {
       position: absolute;
-      width: 120px;
+      width: 100px;
       background-color: #ddd;
       top: 100%;
       left: 50%;
@@ -100,15 +108,16 @@ const router = useRouter()
       align-items: center;
       flex-direction: column;
       .name {
-        font-size: 17px;
+        font-size: 16px;
         width: 100%;
         padding: 15px 0;
         border-bottom: 1px solid white;
       }
-      .switch {
+      .item {
         width: 100%;
         padding: 10px 0;
         font-size: 13px;
+        border-bottom: 1px solid white;
         &:hover {
           background-color: #eee;
         }
