@@ -5,8 +5,10 @@ import { useWebStore } from '@/store'
 
 const webStore = useWebStore()
 
-onMounted(async () => {
-  webStore.getWebs()
+onMounted(() => {
+  if (webStore.webId == -1) {
+    webStore.getWebs()
+  }
 })
 </script>
 
