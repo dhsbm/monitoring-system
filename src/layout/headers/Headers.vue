@@ -98,6 +98,7 @@ const download = () => {
     & > .menu {
       position: absolute;
       width: 100px;
+      z-index: 10;
       background-color: #ddd;
       top: 100%;
       left: 50%;
