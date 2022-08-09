@@ -35,7 +35,7 @@ ajax.interceptors.response.use(
   (response: AxiosResponse) => {
     // 对响应数据做点什么
     NProgress.done()
-    console.log(response.data)
+    // console.log(response.data)
     response.data = camelizeKeys(response.data)
     return response.data
   },

@@ -24,7 +24,7 @@ const editWeb = () => {
   const webStore = useWebStore()
   webStore
     .editWeb({
-      webId: 1,
+      webId: modalData.webId,
       title: modalData.title,
       url: modalData.url,
       warn: '',

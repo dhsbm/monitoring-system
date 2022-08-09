@@ -280,7 +280,16 @@ reqAll({
   webId: webstore.webId,
   endTime: getEndTime(2),
 }).then(({ data }) => {
-  Object.assign(showData, data)
+  const area = []
+  for (let i = 0; i < 35; i++) {
+    area.push((Math.random() * 100) | 0)
+  }
+  const browser = []
+  for (let i = 0; i < 16; i++) {
+    browser.push((Math.random() * 100) | 0)
+  }
+
+  Object.assign(showData, data, { area, browser })
 })
 watch(
   () => webstore.webId,

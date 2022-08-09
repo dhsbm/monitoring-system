@@ -47,8 +47,8 @@ const isLogin = ref(true)
 
 const router = useRouter()
 
-let email = $ref('')
-let password = $ref('')
+let email = $ref('123456@qq.com')
+let password = $ref('123456')
 let name = $ref('')
 
 const loginOrRegister = () => {

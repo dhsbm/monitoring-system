@@ -51,8 +51,13 @@
         <el-table-column prop="time" label="时间" width="180" />
         <el-table-column prop="url" label="路径" width="260" />
         <el-table-column prop="type" label="类型" width="150" />
-        <el-table-column prop="message" label="报错信息" width="300" />
-        <el-table-column prop="stack" label="堆栈" />
+        <el-table-column
+          prop="message"
+          label="报错信息"
+          width="300"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column prop="stack" label="堆栈" :show-overflow-tooltip="true" />
       </el-table>
     </div>
     <div class="pagination">
@@ -109,7 +114,6 @@ const searchData = (page = 1) => {
     page,
     condition,
   }).then(({ code, data }) => {
-    console.log(data)
     if (code == 0) {
       showData.logs = data.logs.map((val) => {
         return {

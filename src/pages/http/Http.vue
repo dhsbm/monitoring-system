@@ -63,15 +63,20 @@
       </el-select>
     </div>
     <div class="list">
-      <el-table :data="showData.logs" size="large">
+      <el-table :data="showData.logs" size="large" @cell-click="showBody">
         <el-table-column prop="time" label="请求时间" width="180" />
-        <el-table-column prop="url" label="页面路径" width="260" />
-        <el-table-column prop="sendUrl" label="请求路径" width="320" />
+        <el-table-column prop="url" label="页面路径" width="260" :show-overflow-tooltip="true" />
+        <el-table-column
+          prop="sendUrl"
+          label="请求路径"
+          width="320"
+          :show-overflow-tooltip="true"
+        />
         <el-table-column prop="resTime" label="响应时间" width="100" />
         <el-table-column prop="status" label="状态码" width="90" />
         <el-table-column prop="success" label="成功" width="80" />
         <el-table-column prop="way" label="请求方法" width="90" />
-        <el-table-column prop="resBody" label="返回信息" />
+        <el-table-column prop="resBody" label="返回信息" :show-overflow-tooltip="true" />
       </el-table>
     </div>
     <!-- 数据显示 -->
@@ -94,7 +99,7 @@ import { reqHttp } from '@/api/index'
 import { ref, watch, reactive, computed } from 'vue'
 import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
 import { useWebStore } from '@/store'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 const webStore = useWebStore()
 const showData = reactive({
   logs: [] as any[],
@@ -126,6 +131,7 @@ let condition = reactive({
   sendUrl: '',
   success: '',
 })
+let resBodyMap: Map<number, string>
 const searchData = (page = 1) => {
   reqHttp({
     webId: webStore.webId,
@@ -133,7 +139,9 @@ const searchData = (page = 1) => {
     condition,
   }).then(({ code, data }) => {
     if (code == 0) {
+      const map = new Map()
       showData.logs = data.logs.map((val) => {
+        map.set(val.logId, val.resBody)
         return {
           ...val,
           time: formatTime(val.time),
@@ -143,6 +151,7 @@ const searchData = (page = 1) => {
       })
       showData.total = data.total
       showData.page = page
+      resBodyMap = map
     } else {
       ElMessage({
         message: '网络异常',
@@ -151,13 +160,26 @@ const searchData = (page = 1) => {
     }
   })
 }
+const showBody = (row: any, column: any) => {
+  if (column.label == '返回信息') {
+    ElMessageBox({
+      message: resBodyMap.get(row.logId)!,
+      title: '返回信息',
+      confirmButtonText: '确认',
+      customStyle: {
+        width: '80%',
+        maxWidth: '100%',
+      },
+    })
+  }
+}
+
+searchData()
 let successOption = [
   { key: '全部', value: '' },
   { key: '成功', value: '0' },
   { key: '失败', value: '1' },
 ]
-searchData()
-
 watch(
   () => webStore.webId,
   () => {
@@ -167,6 +189,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+.abc::v-deep {
+  max-width: 100%;
+  width: 80%;
+}
 .container {
   box-sizing: border-box;
   height: 100%;
