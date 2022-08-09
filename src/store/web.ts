@@ -18,7 +18,6 @@ const useWebStore = defineStore('web', {
         this.webId = data.webList[0]?.webId || -1
         return
       }
-      throw Error()
     },
     async addWeb(params: AddParams) {
       const { code } = await reqAddWeb(params)

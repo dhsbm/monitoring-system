@@ -54,12 +54,20 @@ const deleteWeb = () => {
   )
     .then(({ value }) => {
       if (value == props.webInfo.title) {
-        webStore.deleteWeb(props.webInfo.webId).then(() => {
-          ElMessage({
-            message: '网站已删除',
-            type: 'success',
+        webStore
+          .deleteWeb(props.webInfo.webId)
+          .then(() => {
+            ElMessage({
+              message: '网站已删除',
+              type: 'success',
+            })
           })
-        })
+          .catch(() => {
+            ElMessage({
+              type: 'warning',
+              message: '删除失败',
+            })
+          })
       } else {
         ElMessage({
           type: 'warning',
