@@ -56,19 +56,18 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes, // `routes: routes` 的缩写
 })
-let webStore: any
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  if (!webStore) {
-    webStore = useWebStore()
-  }
-  if (webStore.webId == -1) {
+  const webStore = useWebStore()
+
+  if (userStore.logined && webStore.webId == -1) {
     webStore.getWebs()
   }
   if (!userStore.logined && to.path != '/login') {
     userStore
       .getInfo()
       .then(() => {
+        webStore.getWebs()
         next()
       })
       .catch(() => {

@@ -165,6 +165,7 @@ watch(
 .container {
   box-sizing: border-box;
   height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   padding-bottom: 10px;

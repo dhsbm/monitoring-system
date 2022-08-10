@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import { init } from 'echarts'
 import { defineProps, watch, ref } from 'vue'
 
 let pieChart = ref()
@@ -57,7 +57,7 @@ watch(
   (now) => {
     if (now.length) {
       let pieData = getData(props.data, props.item)
-      let myChart = echarts.init(pieChart.value)
+      let myChart = init(pieChart.value)
       option.series[0].data = pieData as never[]
       myChart.setOption(option)
     }

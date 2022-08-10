@@ -242,6 +242,7 @@ watch(
   box-sizing: border-box;
   height: 100%;
   display: flex;
+  margin: 0 auto;
   flex-direction: column;
   padding-bottom: 10px;
   h1 {

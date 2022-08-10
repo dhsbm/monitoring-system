@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import chinaJSON from '@/assets/json/china.json'
 import { onMounted, ref, watch } from 'vue'
-import * as echarts from 'echarts'
+import { init, registerMap } from 'echarts'
+import { reqMap } from '@/api'
 
 const props = defineProps<{
   area: number[]
@@ -13,21 +13,19 @@ const props = defineProps<{
 const dom = ref()
 const mapName = 'china'
 let myChart: any
-onMounted(() => {
-  myChart = echarts.init(dom.value)
-  // myChart.showLoading()
-  echarts.registerMap(mapName, chinaJSON as any)
-  // myChart.hideLoading()
+let showMap = false
+// 初始化echarts
+onMounted(async () => {
+  myChart = init(dom.value)
+  myChart.showLoading()
+  const response = await reqMap() // 请求map
+  showMap = true
+  registerMap(mapName, response.data)
+  myChart.hideLoading()
+  option.series[0].data = getdata(props.area) as any
+  myChart.setOption(option)
 })
-watch(
-  () => props.area,
-  (now) => {
-    option.series[0].data = getdata(now) as any
-    myChart.setOption(option)
-  }
-)
-
-const option = {
+let option = {
   title: {
     text: '用户地域分布图',
     left: 'center',
@@ -86,6 +84,16 @@ const option = {
     },
   ],
 }
+// 监听props
+watch(
+  () => props.area,
+  (now) => {
+    if (!showMap) return
+    option.series[0].data = getdata(now) as any
+    myChart.setOption(option)
+  }
+)
+// 将数字转化为地区中文
 const getdata = (arrs: number[]) => {
   return arrs.map((v: number, i: number) => {
     return {
@@ -94,6 +102,7 @@ const getdata = (arrs: number[]) => {
     }
   })
 }
+// 地区映射
 const map = [
   '未知',
   '吉林',

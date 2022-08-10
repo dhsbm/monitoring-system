@@ -153,6 +153,7 @@ watch(
 <style lang="scss" scoped>
 .container {
   box-sizing: border-box;
+  margin: 0 auto;
   height: 100%;
   display: flex;
   flex-direction: column;

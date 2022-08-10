@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import { init } from 'echarts'
 import { defineProps, watch, ref, onMounted } from 'vue'
 let pieChart = ref()
 const props = defineProps<{
@@ -31,7 +31,7 @@ const emits = defineEmits(['changeX'])
 
 let myChart: any
 onMounted(() => {
-  myChart = echarts.init(pieChart.value)
+  myChart = init(pieChart.value)
 })
 const options: any = {
   title: {
