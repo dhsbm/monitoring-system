@@ -4,9 +4,8 @@
 
 <script setup lang="ts">
 import { init } from 'echarts'
-import { defineProps, watch, ref } from 'vue'
+import { watch, ref, onMounted } from 'vue'
 
-let pieChart = ref()
 const props = defineProps<{
   item: string[]
   data: number[]
@@ -21,6 +20,24 @@ function getData(data: number[], item: string[]) {
   }
   return ans
 }
+let pieChart = ref()
+let myChart: any
+onMounted(() => {
+  myChart = init(pieChart.value)
+  option.series[0].data = getData(props.data, props.item) as never[]
+  myChart.setOption(option)
+})
+
+// 监听props
+watch(
+  () => props.data,
+  (now) => {
+    if (now.length) {
+      option.series[0].data = getData(props.data, props.item) as never[]
+      myChart.setOption(option)
+    }
+  }
+)
 
 let option = {
   title: {
@@ -51,18 +68,6 @@ let option = {
     },
   ],
 }
-
-watch(
-  () => props.data,
-  (now) => {
-    if (now.length) {
-      let pieData = getData(props.data, props.item)
-      let myChart = init(pieChart.value)
-      option.series[0].data = pieData as never[]
-      myChart.setOption(option)
-    }
-  }
-)
 </script>
 
 <style scoped lang="scss"></style>

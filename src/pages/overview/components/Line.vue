@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { init } from 'echarts'
-import { defineProps, watch, ref, onMounted } from 'vue'
+import { watch, ref, onMounted } from 'vue'
 let pieChart = ref()
 const props = defineProps<{
   titleOption: string
@@ -28,11 +28,24 @@ const props = defineProps<{
   timeIndex: number
 }>()
 const emits = defineEmits(['changeX'])
+const range = ['最近4小时', '最近1天', '最近7天', '最近14天', '最近30天']
 
 let myChart: any
 onMounted(() => {
   myChart = init(pieChart.value)
+  setSeries()
+  myChart.setOption(options)
 })
+
+// 监听props
+watch(
+  () => props.data,
+  (now) => {
+    if (!now.length) return
+    setSeries()
+    myChart.setOption(options)
+  }
+)
 const options: any = {
   title: {
     text: props.titleOption,
@@ -46,8 +59,16 @@ const options: any = {
     bottom: '3%',
     containLabel: true,
   },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: props.xAxisOption,
+  },
   yAxis: {
     type: 'value',
+  },
+  legend: {
+    data: [],
   },
   series: [
     {
@@ -56,25 +77,11 @@ const options: any = {
     },
   ],
 }
-
-const range = ['最近4小时', '最近1天', '最近7天', '最近14天', '最近30天']
-watch(
-  () => props.data,
-  () => {
-    let series = GetSeries(props.yAxisOption, props.data)
-    options.series = series
-    options.xAxis = {
-      type: 'category',
-      boundaryGap: false,
-      data: props.xAxisOption,
-    }
-    options.legend = {
-      data: props.yAxisOption,
-    }
-    myChart.setOption(options)
-  }
-)
-
+function setSeries() {
+  options.series = GetSeries(props.yAxisOption, props.data)
+  options.xAxis.data = props.xAxisOption
+  options.legend.data = props.yAxisOption
+}
 function GetSeries(yAxisOption: string[], data: number[][]) {
   return yAxisOption.map((d: string, i: number) => {
     const sery: any = {}
