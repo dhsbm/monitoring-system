@@ -281,32 +281,17 @@ const changeX = (kind: number, index: number, timeIndex: number) => {
   })
 }
 
-reqAll({
-  webId: webstore.webId,
-  endTime: getEndTime(2),
-}).then(({ data }) => {
-  const area = []
-  for (let i = 0; i < 35; i++) {
-    area.push((Math.random() * 100) | 0)
-  }
-  const browser = []
-  for (let i = 0; i < 16; i++) {
-    browser.push((Math.random() * 100) | 0)
-  }
+const getData = () => {
+  reqAll({
+    webId: webstore.webId,
+    endTime: getEndTime(2),
+  }).then(({ data }) => {
+    Object.assign(showData, data)
+  })
+}
+getData()
 
-  Object.assign(showData, data, { area, browser })
-})
-watch(
-  () => webstore.webId,
-  () => {
-    reqAll({
-      webId: webstore.webId,
-      endTime: getEndTime(2),
-    }).then(({ data }) => {
-      Object.assign(showData, data)
-    })
-  }
-)
+watch(() => webstore.webId, getData)
 </script>
 
 <style lang="scss" scoped>

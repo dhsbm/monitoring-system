@@ -87,7 +87,7 @@ function GetSeries(yAxisOption: string[], data: number[][]) {
     const sery: any = {}
     sery.name = d
     sery.type = 'line'
-    sery.stack = 'Total'
+    // sery.stack = 'Total'
     sery.data = data.map((t: number[]) => t[i])
     return sery
   })
