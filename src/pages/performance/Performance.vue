@@ -175,16 +175,14 @@ const range = reactive({
   lStart: '',
   lEnd: '',
 })
-const createRangeFun = (start: string, end: string) => {
-  return () => {
-    if (start == '' && end == '') return ''
-    else if (start == '') {
-      return '0_' + parseInt(end)
-    } else if (end == '') {
-      return parseInt(start) + '_10000'
-    } else {
-      return parseInt(start) + '_' + parseInt(end)
-    }
+const getReange = (start: string, end: string) => {
+  if (start == '' && end == '') return ''
+  else if (start == '') {
+    return '0_' + parseInt(end)
+  } else if (end == '') {
+    return parseInt(start) + '_10000'
+  } else {
+    return parseInt(start) + '_' + parseInt(end)
   }
 }
 let condition = reactive({
@@ -193,12 +191,12 @@ let condition = reactive({
     return startTime + '_' + endTime
   }),
   url: '',
-  dns: computed(createRangeFun(range.dnsStart, range.dnsEnd)),
-  fp: computed(createRangeFun(range.fpStart, range.fpEnd)),
-  fcp: computed(createRangeFun(range.fcpStart, range.fcpEnd)),
-  lcp: computed(createRangeFun(range.lcpStart, range.lcpEnd)),
-  dcl: computed(createRangeFun(range.dclStart, range.dclEnd)),
-  l: computed(createRangeFun(range.lStart, range.lEnd)),
+  dns: computed(() => getReange(range.dnsStart, range.dnsEnd)),
+  fp: computed(() => getReange(range.fpStart, range.fpEnd)),
+  fcp: computed(() => getReange(range.fcpStart, range.fcpEnd)),
+  lcp: computed(() => getReange(range.lcpStart, range.lcpEnd)),
+  dcl: computed(() => getReange(range.dclStart, range.dclEnd)),
+  l: computed(() => getReange(range.lStart, range.lEnd)),
 })
 
 const searchData = (page = 1) => {

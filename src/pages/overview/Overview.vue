@@ -19,7 +19,7 @@
             :width="130"
             :strokewidth="10"
             :type="1"
-            :text="`JS错误`"
+            :text="`脚本异常`"
             :color="color.jsErr"
             class="item"
           />
@@ -176,7 +176,7 @@ const color = {
 
 const xAxis = getTimeRange(2)
 
-let yAxis_err = ['JS错误', '自定义异常', '静态资源异常', '接口异常']
+let yAxis_err = ['脚本错误', '静态资源异常', '接口异常', '白屏异常']
 let yAxis_per = ['dns', 'fp', 'fcp', 'lcp', 'dcl', 'l']
 let yAxis_user1 = ['pv', 'pu']
 let yAxis_user2 = ['用户停留时间']
