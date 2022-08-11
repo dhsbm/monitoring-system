@@ -89,8 +89,6 @@
         @current-change="searchData"
       />
     </div>
-
-    ><!-- 筛选列表 -->
   </div>
 </template>
 
@@ -189,10 +187,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.abc::v-deep {
-  max-width: 100%;
-  width: 80%;
-}
 .container {
   box-sizing: border-box;
   height: 100%;

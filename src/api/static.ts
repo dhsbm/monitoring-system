@@ -1,11 +1,15 @@
 import axios from 'axios'
 import { CommonResponse } from '@/interface'
 
-interface MapResponse extends CommonResponse {
+interface StaticResponse extends CommonResponse {
   data: string
 }
 
 // 请求中国地图数据
-export function reqMap(): Promise<MapResponse> {
+export function reqMap(): Promise<StaticResponse> {
   return axios.get('/china.json')
+}
+
+export function reqCSS(): Promise<StaticResponse> {
+  return axios.get('/element.css')
 }

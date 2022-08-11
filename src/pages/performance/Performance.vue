@@ -7,6 +7,7 @@
         class="m-2"
         placeholder="Select"
         style="width: 120px; margin-right: 60px"
+        @change="searchData()"
       >
         <el-option
           v-for="item in timeOption"

@@ -3,7 +3,7 @@ import ajax from './ajax'
 import { reqLogin, reqRegister, reqGetInfo, LoginParams, RegisterParams } from './user'
 import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb, AddParams, EditParams } from './web'
 import { reqAll, reqStat, reqErr, reqBeh, reqPer, reqHttp } from './logs'
-import { reqMap } from './static'
+import { reqMap, reqCSS } from './static'
 
 export {
   ajax,
@@ -22,6 +22,7 @@ export {
   reqHttp,
   reqStat,
   reqMap,
+  reqCSS,
 }
 
 export type { LoginParams, RegisterParams, AddParams, EditParams }

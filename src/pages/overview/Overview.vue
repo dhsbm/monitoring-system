@@ -131,17 +131,17 @@
 </template>
 
 <script setup lang="ts">
-// import Map from './components/Map.vue'
-// import Progress from './components/Progress.vue'
+import Progress from './components/Progress.vue'
 // import Line from './components/Line.vue'
 // import Pie from './components/Pie.vue'
+// import Map from './components/Map.vue'
 import { reqAll, reqStat } from '@/api/index'
 import { reactive, watch, defineAsyncComponent } from 'vue'
 import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
 import { getEndTime, getTimeRange } from '@/common'
 
-const Progress = defineAsyncComponent(() => import('./components/Progress.vue'))
+// const Progress = defineAsyncComponent(() => import('./components/Progress.vue'))
 const Line = defineAsyncComponent(() => import('./components/Line.vue'))
 const Pie = defineAsyncComponent(() => import('./components/Pie.vue'))
 const Map = defineAsyncComponent(() => import('./components/Map.vue'))
@@ -358,6 +358,7 @@ watch(() => webstore.webId, getData)
   }
   .mapData {
     background-color: white;
+    border-radius: 1rem;
     display: flex;
     justify-content: space-between;
     padding: 1rem;

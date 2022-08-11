@@ -69,6 +69,13 @@ const loginOrRegister = () => {
         })
       })
   } else {
+    if (password.length < 6 || password.length > 20) {
+      ElMessage({
+        message: '密码长度未6-20',
+        type: 'warning',
+      })
+      return
+    }
     userStore
       .register({
         email: email,
