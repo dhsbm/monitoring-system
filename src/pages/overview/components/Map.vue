@@ -4,27 +4,40 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { init, registerMap } from 'echarts'
+import { init, registerMap, EChartsType } from 'echarts'
+import { Area } from '@/interface'
 import { reqMap } from '@/api'
 
 const props = defineProps<{
   area: number[]
 }>()
-const dom = ref()
+
+const dom = ref() // 通过ref获取dom对象
 const mapName = 'china'
-let myChart: any
-let showMap = false
-// 初始化echarts
+let myChart: EChartsType
+let showMap = false // 未注册地图前，不展示
 onMounted(async () => {
-  myChart = init(dom.value)
+  myChart = init(dom.value) // 绑定dom元素
   myChart.showLoading()
-  const response = await reqMap() // 请求map
-  showMap = true
+  const response = await reqMap() // 异步请求中国地图数据
+  showMap = true // 地图请求完毕，可展示
   registerMap(mapName, response.data)
   myChart.hideLoading()
-  option.series[0].data = getdata(props.area) as any
+  option.series[0].data = formatData(props.area)
   myChart.setOption(option)
 })
+
+// 监听props
+watch(
+  () => props.area,
+  (now) => {
+    if (!showMap) return
+    option.series[0].data = formatData(now) as any
+    myChart.setOption(option)
+  }
+)
+
+// echarts地图配置项
 let option = {
   title: {
     text: '用户地域分布图',
@@ -34,9 +47,8 @@ let option = {
   tooltip: {
     trigger: 'item',
     formatter: function (params: any) {
-      const toolTiphtml = params.name + '访问人数: ' + params.value + '万人'
-      //console.log(toolTiphtml)
-      return toolTiphtml
+      const displayStr = params.name + ': ' + params.value + ' 万人'
+      return displayStr
     },
   },
   geo: {
@@ -79,67 +91,21 @@ let option = {
       map: mapName,
       geoIndex: 0,
       animation: false,
-      data: [],
+      data: [] as { name: string; value: number }[],
       coordinateSystem: 'geo',
     },
   ],
 }
-// 监听props
-watch(
-  () => props.area,
-  (now) => {
-    if (!showMap) return
-    option.series[0].data = getdata(now) as any
-    myChart.setOption(option)
-  }
-)
+
 // 将数字转化为地区中文
-const getdata = (arrs: number[]) => {
-  return arrs.map((v: number, i: number) => {
+const formatData = (arr: number[]) => {
+  return arr.map((v: number, i: number) => {
     return {
-      name: map[i],
+      name: Area[i],
       value: v,
     }
   })
 }
-// 地区映射
-const map = [
-  '未知',
-  '吉林',
-  '台湾',
-  '福建',
-  '甘肃',
-  '安徽',
-  '北京',
-  '江苏',
-  '上海',
-  '重庆',
-  '河北',
-  '河南',
-  '湖南',
-  '湖北',
-  '浙江',
-  '江西',
-  '陕西',
-  '山东',
-  '山西',
-  '黑龙江',
-  '青海',
-  '辽宁',
-  '云南',
-  '海南',
-  '四川',
-  '广东',
-  '广西',
-  '宁夏',
-  '西藏',
-  '新疆',
-  '内蒙古',
-  '香港',
-  '澳门',
-  '天津',
-  '贵州',
-]
 </script>
 
 <style scoped>

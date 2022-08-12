@@ -30,7 +30,7 @@
       />
       <div class="time">
         <el-input
-          v-model="startTime"
+          v-model="startResTime"
           type="number"
           style="width: 60px"
           placeholder="起始"
@@ -38,7 +38,7 @@
         />
         <span>-</span>
         <el-input
-          v-model="endTime"
+          v-model="endResTime"
           type="number"
           style="width: 60px"
           placeholder="结束"
@@ -63,7 +63,7 @@
       </el-select>
     </div>
     <div class="list">
-      <el-table :data="showData.logs" size="large" @cell-click="showBody">
+      <el-table :data="showData.logs" size="large">
         <el-table-column prop="time" label="请求时间" width="180" />
         <el-table-column prop="url" label="页面路径" width="260" :show-overflow-tooltip="true" />
         <el-table-column
@@ -95,41 +95,39 @@
 <script setup lang="ts">
 import { reqHttp } from '@/api/index'
 import { ref, watch, reactive, computed } from 'vue'
-import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+import { getBothTime, timeOption, formatTime, formatMS, formatRangeCondition } from '@/common'
 import { useWebStore } from '@/store'
-import { ElMessage, ElMessageBox } from 'element-plus'
-const webStore = useWebStore()
+import { ElMessage } from 'element-plus'
+
+// 展示的数据
 const showData = reactive({
   logs: [] as any[],
   total: 0,
   page: 1,
   size: 10,
 })
+// 时间索引 用于区分时间跨度
 const timeIndex = ref(2)
-const startTime = ref('')
-const endTime = ref('')
+// 响应时间查询条件
+const startResTime = ref('')
+const endResTime = ref('')
+
+// 查询条件
 let condition = reactive({
-  time: computed(() => {
-    const [startTime, endTime] = getBothTime(timeIndex.value)
-    return startTime + '_' + endTime
-  }),
+  time: computed(() => getBothTime(timeIndex.value).join('_')),
   url: '',
-  resTime: computed(() => {
-    const start = startTime.value
-    const end = endTime.value
-    if (start == '' && end == '') return ''
-    else if (start == '') {
-      return '0_' + parseInt(end)
-    } else if (end == '') {
-      return parseInt(start) + '_10000'
-    } else {
-      return parseInt(start) + '_' + parseInt(end)
-    }
-  }),
+  resTime: computed(() => formatRangeCondition(startResTime.value, endResTime.value)),
   sendUrl: '',
   success: '',
 })
-let resBodyMap: Map<number, string>
+// 成功/失败条件选项
+let successOption = [
+  { key: '全部', value: '' },
+  { key: '成功', value: '0' },
+  { key: '失败', value: '1' },
+]
+
+// 请求数据
 const searchData = (page = 1) => {
   reqHttp({
     webId: webStore.webId,
@@ -137,19 +135,16 @@ const searchData = (page = 1) => {
     condition,
   }).then(({ code, data }) => {
     if (code == 0) {
-      const map = new Map()
       showData.logs = data.logs.map((val) => {
-        map.set(val.logId, val.resBody)
         return {
           ...val,
-          time: formatTime(val.time),
-          resTime: formatMS(val.resTime),
+          time: formatTime(val.time), // 转化时间戳为字符串
+          resTime: formatMS(val.resTime), // 转化毫秒为字符串
           success: val.success === 0 ? '成功' : '失败',
         }
       })
       showData.total = data.total
       showData.page = page
-      resBodyMap = map
     } else {
       ElMessage({
         message: '网络异常',
@@ -158,32 +153,13 @@ const searchData = (page = 1) => {
     }
   })
 }
-const showBody = (row: any, column: any) => {
-  if (column.label == '返回信息') {
-    ElMessageBox({
-      message: resBodyMap.get(row.logId)!,
-      title: '返回信息',
-      confirmButtonText: '确认',
-      customStyle: {
-        width: '80%',
-        maxWidth: '100%',
-      },
-    })
-  }
-}
-
-searchData()
-let successOption = [
-  { key: '全部', value: '' },
-  { key: '成功', value: '0' },
-  { key: '失败', value: '1' },
-]
+// 网站id改变时，重新请求数据
+const webStore = useWebStore()
 watch(
   () => webStore.webId,
-  () => {
-    searchData()
-  }
+  () => searchData()
 )
+searchData()
 </script>
 
 <style lang="scss" scoped>

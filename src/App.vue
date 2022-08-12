@@ -10,6 +10,7 @@ body {
   height: 100%;
   background-color: rgb(243 244 246);
 }
+// 清除数字输入框的上下箭头
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none !important;

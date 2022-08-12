@@ -1,30 +1,21 @@
 <template>
-  <div ref="pieChart" style="width: 40rem"></div>
+  <div ref="dom" style="width: 40rem"></div>
 </template>
 
 <script setup lang="ts">
-import { init } from 'echarts'
+import { init, EChartsType } from 'echarts'
 import { watch, ref, onMounted } from 'vue'
 
 const props = defineProps<{
   item: string[]
   data: number[]
 }>()
-function getData(data: number[], item: string[]) {
-  let ans = []
-  for (let i = 0; i < item.length; i++) {
-    const t = {} as { value: number; name: string }
-    t.value = data[i]
-    t.name = item[i]
-    ans.push(t)
-  }
-  return ans
-}
-let pieChart = ref()
-let myChart: any
+
+const dom = ref() // 通过ref获取dom对象
+let myChart: EChartsType
 onMounted(() => {
-  myChart = init(pieChart.value)
-  option.series[0].data = getData(props.data, props.item) as never[]
+  myChart = init(dom.value) // 绑定dom元素
+  option.series[0].data = formatData(props.data, props.item)
   myChart.setOption(option)
 })
 
@@ -33,12 +24,13 @@ watch(
   () => props.data,
   (now) => {
     if (now.length) {
-      option.series[0].data = getData(props.data, props.item) as never[]
+      option.series[0].data = formatData(props.data, props.item)
       myChart.setOption(option)
     }
   }
 )
 
+// echarts饼图配置项
 let option = {
   title: {
     text: '用户浏览器类型',
@@ -57,7 +49,7 @@ let option = {
       name: '用户浏览器类型',
       type: 'pie',
       radius: '50%',
-      data: [],
+      data: [] as { value: number; name: string }[],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -67,6 +59,18 @@ let option = {
       },
     },
   ],
+}
+
+// 格式化传入的数据
+function formatData(data: number[], item: string[]) {
+  let ans = []
+  for (let i = 0; i < item.length; i++) {
+    const obj = {} as { value: number; name: string }
+    obj.value = data[i]
+    obj.name = item[i]
+    ans.push(obj)
+  }
+  return ans
 }
 </script>
 

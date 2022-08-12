@@ -83,39 +83,32 @@ import { reqBeh } from '@/api/index'
 import { ref, watch, reactive, computed } from 'vue'
 import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
-import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+import { getBothTime, timeOption, formatTime, formatMS, formatRangeCondition } from '@/common'
 
-const webStore = useWebStore()
+// 展示的数据
 const showData = reactive({
   logs: [] as any[],
   total: 0,
   page: 1,
   size: 10,
 })
-//当前选择的查询条件
+// 时间索引 用于区分时间跨度
 const timeIndex = ref(2)
+// 停留时间查询条件
 const startDuration = ref('')
 const endDuration = ref('')
+
+// 查询条件
 let condition = reactive({
-  time: computed(() => {
-    const [startTime, endTime] = getBothTime(timeIndex.value)
-    return startTime + '_' + endTime
-  }),
+  time: computed(() => getBothTime(timeIndex.value).join('_')),
   url: '',
-  duration: computed(() => {
-    const start = startDuration.value
-    const end = endDuration.value
-    if (start == '' && end == '') return ''
-    else if (start == '') {
-      return '0_' + parseInt(end) * 1000
-    } else if (end == '') {
-      return parseInt(start) * 1000 + '_86400000'
-    } else {
-      return parseInt(start) * 1000 + '_' + parseInt(end) * 1000
-    }
-  }),
+  duration: computed(() =>
+    formatRangeCondition(startDuration.value, endDuration.value, '_86400000', 1000)
+  ),
   ip: '',
 })
+
+// 请求数据
 const searchData = (page = 1) => {
   reqBeh({
     webId: webStore.webId,
@@ -126,9 +119,9 @@ const searchData = (page = 1) => {
       showData.logs = data.logs.map((val) => {
         return {
           ...val,
-          time: formatTime(val.time),
-          area: Area[val.area],
-          duration: formatMS(val.duration),
+          time: formatTime(val.time), // 格式化时间戳
+          area: Area[val.area], // 映射地区
+          duration: formatMS(val.duration), // 转化毫秒为时间字符串
         }
       })
       showData.total = data.total
@@ -141,13 +134,14 @@ const searchData = (page = 1) => {
     }
   })
 }
-searchData()
+
+// 网站id改变时，重新请求数据
+const webStore = useWebStore()
 watch(
   () => webStore.webId,
-  () => {
-    searchData()
-  }
+  () => searchData()
 )
+searchData()
 </script>
 
 <style lang="scss" scoped>

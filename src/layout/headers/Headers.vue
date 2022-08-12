@@ -58,6 +58,7 @@ const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 
+// 监控脚本下载
 const a = document.createElement('a')
 a.href = '/monitoring.js'
 a.download = 'monitoring.js'
@@ -93,7 +94,7 @@ const download = () => {
     line-height: 50px;
   }
   .user {
-    width: 50px;
+    width: 60px;
     position: relative;
     & > .menu {
       position: absolute;
@@ -138,9 +139,10 @@ const download = () => {
       display: flex;
     }
     svg {
-      margin-top: 20%;
-      width: 60%;
-      height: 60%;
+      margin-top: 10px;
+      margin-left: 10px;
+      width: 30px;
+      height: 30px;
     }
   }
   .fill {

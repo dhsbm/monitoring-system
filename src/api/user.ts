@@ -9,7 +9,7 @@ interface UserResponse extends CommonResponse {
   }
 }
 
-// 登录
+// 用户登录
 export function reqLogin(params: LoginParams): Promise<UserResponse> {
   return ajax.post('/user/login', params)
 }
@@ -18,7 +18,7 @@ export interface LoginParams {
   password: string
 }
 
-// 注册
+// 用户注册
 export function reqRegister(params: RegisterParams): Promise<UserResponse> {
   return ajax.post('/user/register', params)
 }
@@ -28,7 +28,7 @@ export interface RegisterParams {
   name: string
 }
 
-// 获取用户信息
+// 根据token获取用户信息
 export function reqGetInfo(): Promise<UserResponse> {
   return ajax.get('/user/info')
 }

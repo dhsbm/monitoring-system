@@ -10,6 +10,7 @@ export function reqMap(): Promise<StaticResponse> {
   return axios.get('/china.json')
 }
 
+// 请求element-plus.css
 export function reqCSS(): Promise<StaticResponse> {
   return axios.get('/element.css')
 }

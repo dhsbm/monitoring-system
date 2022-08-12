@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div ref="pieChart" style="height: 30rem"></div>
+    <div ref="dom" style="height: 30rem"></div>
     <div class="select">
       <div
         v-for="(item, i) in range"
@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { init } from 'echarts'
 import { watch, ref, onMounted } from 'vue'
-let pieChart = ref()
 const props = defineProps<{
   titleOption: string
   xAxisOption: string[]
@@ -28,11 +27,14 @@ const props = defineProps<{
   timeIndex: number
 }>()
 const emits = defineEmits(['changeX'])
+
+// 时间范围选择列表
 const range = ['最近4小时', '最近1天', '最近7天', '最近14天', '最近30天']
 
+const dom = ref() // 通过ref获取dom对象
 let myChart: any
 onMounted(() => {
-  myChart = init(pieChart.value)
+  myChart = init(dom.value) // 绑定dom元素
   setSeries()
   myChart.setOption(options)
 })
@@ -46,7 +48,8 @@ watch(
     myChart.setOption(options)
   }
 )
-const options: any = {
+// echarts折线图配置项
+const options = {
   title: {
     text: props.titleOption,
   },
@@ -68,7 +71,7 @@ const options: any = {
     type: 'value',
   },
   legend: {
-    data: [],
+    data: [] as string[],
   },
   series: [
     {
@@ -77,19 +80,21 @@ const options: any = {
     },
   ],
 }
+// 设置图表数据
 function setSeries() {
   options.series = GetSeries(props.yAxisOption, props.data)
   options.xAxis.data = props.xAxisOption
   options.legend.data = props.yAxisOption
 }
+// 格式化图表数据
 function GetSeries(yAxisOption: string[], data: number[][]) {
   return yAxisOption.map((d: string, i: number) => {
-    const sery: any = {}
-    sery.name = d
-    sery.type = 'line'
-    // sery.stack = 'Total'
-    sery.data = data.map((t: number[]) => t[i])
-    return sery
+    const obj = {} as { type: 'line'; name: string; data: number[] }
+    obj.name = d
+    obj.type = 'line'
+    // obj.stack = 'Total'
+    obj.data = data.map((t: number[]) => t[i])
+    return obj
   })
 }
 </script>

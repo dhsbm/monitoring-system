@@ -13,6 +13,7 @@ const props = defineProps<{
   webInfo: WebInfo
 }>()
 
+// 生成假数据
 const nums = {
   activeUsers: (Math.random() * 8000 + 1000) | 0,
   newUsers: Math.random() * 10,
@@ -22,7 +23,6 @@ const nums = {
   httpErr: (Math.random() * 50) | 0,
   whiteErr: (Math.random() * 10) | 0,
 }
-
 const score = (100 - (nums.jsErr + nums.srcErr + nums.httpErr + nums.whiteErr) / 4) | 0
 const status = computed(() => {
   if (score >= 85) {
@@ -34,12 +34,13 @@ const status = computed(() => {
   }
 })
 
-const webStore = useWebStore()
-
+// 编辑网站，展示模态框
 const editWeb = () => {
   switchShow(true, props.webInfo.title, props.webInfo.url, false, props.webInfo.webId)
 }
 
+const webStore = useWebStore()
+// 删除网站
 const deleteWeb = () => {
   ElMessageBox.prompt(
     `此操作将删除该网站的监控信息，请输入“${props.webInfo.title}”确认删除`,
@@ -83,6 +84,7 @@ const deleteWeb = () => {
     })
 }
 
+// 点击标题跳转概览页
 function go() {
   webStore.webId = props.webInfo.webId
   router.push('/overview')

@@ -5,12 +5,13 @@ import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb, AddParams, EditParams 
 const useWebStore = defineStore('web', {
   state: () => {
     return {
-      webList: <WebInfo[]>[],
-      webId: -1,
+      webList: <WebInfo[]>[], // 用户网站信息
+      webId: -1, // 当前网站，-1表示尚未拥有网站信息
     }
   },
   getters: {},
   actions: {
+    // 获取网站列表
     async getWebs() {
       const { code, data } = await reqWebList()
       if (code == 0) {
@@ -19,6 +20,7 @@ const useWebStore = defineStore('web', {
         return
       }
     },
+    // 添加网站
     async addWeb(params: AddParams) {
       const { code } = await reqAddWeb(params)
       if (code == 0) {
@@ -27,6 +29,7 @@ const useWebStore = defineStore('web', {
         throw Error()
       }
     },
+    // 编辑网站
     async editWeb(params: EditParams) {
       const { code } = await reqEditWeb(params)
       if (code == 0) {
@@ -35,6 +38,7 @@ const useWebStore = defineStore('web', {
         throw Error()
       }
     },
+    // 删除网站
     async deleteWeb(webId: number) {
       const { code } = await reqDeleteWeb({ webId })
       if (code == 0) {

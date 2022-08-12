@@ -4,7 +4,7 @@ import { modalData, switchShow } from './modal'
 </script>
 
 <template>
-  <ModalWrapper v-model="modalData.isShow">
+  <ModalWrapper>
     <div class="bg-white rounded-xl p-5 flex flex-col w-96">
       <h1 class="text-xl">{{ modalData.isAdd ? '添加网站' : '修改网站' }}</h1>
 

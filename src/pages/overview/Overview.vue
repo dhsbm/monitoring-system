@@ -141,13 +141,13 @@ import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
 import { getEndTime, getTimeRange } from '@/common'
 
+// 改为异步组件
 // const Progress = defineAsyncComponent(() => import('./components/Progress.vue'))
 const Line = defineAsyncComponent(() => import('./components/Line.vue'))
 const Pie = defineAsyncComponent(() => import('./components/Pie.vue'))
 const Map = defineAsyncComponent(() => import('./components/Map.vue'))
 
-const webstore = useWebStore()
-
+// 健康状况假数据
 const nums = {
   jsErr: (Math.random() * 100) | 0,
   srcErr: (Math.random() * 100) | 0,
@@ -155,6 +155,7 @@ const nums = {
   whiteErr: (Math.random() * 10) | 0,
 }
 const score = (100 - (nums.jsErr + nums.srcErr + nums.httpErr + nums.whiteErr) / 4) | 0
+// 根据评分返回颜色，总分和异常分的颜色判定条件不同
 const getColor = (score: number, sign = false): string => {
   if (sign) {
     if (score > 85) return '#28c989'
@@ -166,6 +167,7 @@ const getColor = (score: number, sign = false): string => {
     else return '#28c989'
   }
 }
+// 颜色映射
 const color = {
   total: getColor(score, true),
   jsErr: getColor(nums.jsErr),
@@ -174,8 +176,9 @@ const color = {
   whiteErr: getColor(nums.whiteErr),
 }
 
+// 横坐标 时间维度
 const xAxis = getTimeRange(2)
-
+// 类型维度
 let yAxis_err = ['脚本错误', '静态资源异常', '接口异常', '白屏异常']
 let yAxis_per = ['dns', 'fp', 'fcp', 'lcp', 'dcl', 'l']
 let yAxis_user1 = ['pv', 'pu']
@@ -184,6 +187,7 @@ let yAxis_http1 = ['成功请求数', '失败请求数']
 let yAxis_http2 = ['响应时间']
 let browser_item = ['其他', 'Chrome', 'Edge', 'Firefox', 'IE', 'Opera', 'Safari']
 
+// 响应式对象 各图表的数据、时间维度、时间索引
 const showData: Data = reactive({
   err: [],
   errX: xAxis,
@@ -230,9 +234,11 @@ interface Data {
   area: number[]
 }
 
+// 改变时间索引(时间跨度) 根据kind和index区分是哪个图表
+// 请求某一图表的响应式数据
 const changeX = (kind: number, index: number, timeIndex: number) => {
   reqStat({
-    webId: webstore.webId,
+    webId: webStore.webId,
     kind,
     index,
     time: timeIndex,
@@ -281,17 +287,20 @@ const changeX = (kind: number, index: number, timeIndex: number) => {
   })
 }
 
-const getData = () => {
+// 一次性请求所有图表数据
+const getAllData = () => {
   reqAll({
-    webId: webstore.webId,
+    webId: webStore.webId,
     endTime: getEndTime(2),
   }).then(({ data }) => {
     Object.assign(showData, data)
   })
 }
-getData()
 
-watch(() => webstore.webId, getData)
+// 网站id改变，重新请求数据
+const webStore = useWebStore()
+watch(() => webStore.webId, getAllData)
+getAllData()
 </script>
 
 <style lang="scss" scoped>

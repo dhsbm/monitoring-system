@@ -1,17 +1,15 @@
+import { ElMessage } from 'element-plus'
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Layout from '@/layout/Layout.vue'
-import Login from 'pages/login/Login.vue'
+// import Layout from '@/layout/Layout.vue'
+// import Login from 'pages/login/Login.vue'
 import { useUserStore, useWebStore } from '@/store'
 
-// 2. 定义一些路由
-// 每个路由都需要映射到一个组件。
-// 我们后面再讨论嵌套路由。
 const routes = [
-  { path: '/login', name: 'Login', component: Login },
+  { path: '/login', name: 'Login', component: () => import('pages/login/Login.vue') },
   {
     path: '/',
     name: '/',
-    component: Layout,
+    component: () => import('@/layout/Layout.vue'),
     redirect: '/home',
     children: [
       {
@@ -48,32 +46,36 @@ const routes = [
   },
 ]
 
-// 3. 创建路由实例并传递 `routes` 配置
-// 你可以在这里输入更多的配置，但我们在这里
-// 暂时保持简单
 const router = createRouter({
-  // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
   history: createWebHashHistory(),
-  routes, // `routes: routes` 的缩写
+  routes,
 })
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   const webStore = useWebStore()
 
-  if (userStore.logined && webStore.webId == -1) {
-    webStore.getWebs()
-  }
-  if (!userStore.logined && to.path != '/login') {
-    userStore
-      .getInfo()
-      .then(() => {
-        webStore.getWebs()
-        next()
-      })
-      .catch(() => {
-        router.push('/login')
-      })
+  // 未登录状态下，尝试根据token获取用户信息，未成功获取则跳至登录页
+  if (!userStore.logined) {
+    if (to.path != '/login') {
+      userStore
+        .getInfo()
+        .then(() => {
+          webStore.getWebs()
+          next()
+        })
+        .catch(() => {
+          router.push('/login')
+        })
+    }
   } else {
+    // 当前用户尚未创建网站，跳回首页
+    if (webStore.webId == -1 && to.path != '/login' && to.path != '/home') {
+      router.push('/home')
+      ElMessage({
+        message: '请先添加网站',
+        type: 'warning',
+      })
+    }
     next()
   }
 })

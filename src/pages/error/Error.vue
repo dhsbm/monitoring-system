@@ -8,6 +8,7 @@
         class="m-2"
         placeholder="Select"
         style="width: 120px; margin-right: 60px"
+        @change="searchData()"
       >
         <el-option
           v-for="item in timeOption"
@@ -30,6 +31,7 @@
         class="m-2"
         placeholder="Select"
         style="margin-right: 50px; width: 100px"
+        @change="searchData()"
       >
         <el-option
           v-for="item in typeOption"
@@ -79,8 +81,8 @@ import { ref, watch, reactive, computed } from 'vue'
 import { useWebStore } from '@/store'
 import { ElMessage } from 'element-plus'
 import { getBothTime, timeOption, formatTime } from '@/common'
-const webStore = useWebStore()
 
+// 展示的数据
 const showData = reactive({
   logs: [] as any[],
   total: 0,
@@ -88,18 +90,18 @@ const showData = reactive({
   size: 10,
 })
 
-//当前选择的查询条件
+// 时间索引 用于区分时间跨度
 const timeIndex = ref(2)
+
+// 查询条件
 let condition = reactive({
-  time: computed(() => {
-    const [startTime, endTime] = getBothTime(timeIndex.value)
-    return startTime + '_' + endTime
-  }),
+  time: computed(() => getBothTime(timeIndex.value).join('_')),
   url: '',
   type: '',
   message: '',
 })
 
+// 异常类型条件选项
 let typeOption = [
   { key: '全部', value: '' },
   { key: '脚本异常', value: '0' },
@@ -108,6 +110,7 @@ let typeOption = [
   { key: '白屏异常', value: '3' },
 ]
 
+// 请求数据
 const searchData = (page = 1) => {
   reqErr({
     webId: webStore.webId,
@@ -133,6 +136,7 @@ const searchData = (page = 1) => {
   })
 }
 
+// 转换异常类型
 const getType = (type: Type) => {
   switch (type) {
     case 0:
@@ -145,20 +149,14 @@ const getType = (type: Type) => {
       return '白屏异常'
   }
 }
-searchData()
-//请求数据
+
+// 网站id改变时，重新请求数据
+const webStore = useWebStore()
 watch(
   () => webStore.webId,
   () => searchData()
 )
-watch(
-  () => condition.type,
-  () => searchData()
-)
-watch(
-  () => condition.time,
-  () => searchData()
-)
+searchData()
 </script>
 
 <style lang="scss" scoped>

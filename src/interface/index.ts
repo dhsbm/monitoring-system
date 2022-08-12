@@ -118,53 +118,10 @@ export enum Area {
   天津 = 33,
   贵州 = 34,
 }
-
+// 网站信息
 export interface WebInfo {
   webId: number
   url: string
   title: string
   warn: string
-}
-//Errlogs展示类型
-export interface Logs {
-  logId: number
-  kind: Kind
-  time: String // 开始时间
-  url: string // 页面路径
-  total: number
-  logs: Array<Object>
-}
-export interface errLogShow extends Logs {
-  type: String
-  message: string // 异常信息
-  stack: string // 触发异常的行为
-  selector: string // 触发异常的元素
-}
-// 性能日志
-export interface PerLogShow extends Logs {
-  dns: number // DNS解析
-  fp: number // 首屏渲染
-  fcp: number // 内容渲染
-  lcp: number // 最大内容渲染
-  dcl: number // dom 完全渲染
-  l: number // onload
-}
-// 行为日志
-export interface BehLogShow extends Logs {
-  duration: number // 停留时间
-  ip: string
-  area: string
-  // brower:Browser
-}
-// 请求日志
-export interface HTTPLogShow extends Logs {
-  resTime: number
-  sendUrl: string
-  way: string
-  success: boolean
-  status: number // 状态码
-  // reqHeader: string
-  // reqParams: string
-  // resHeader: string
-  resBody: string
 }

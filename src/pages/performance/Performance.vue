@@ -150,18 +150,19 @@
 import { reqPer } from '@/api/index'
 import { ref, watch, reactive, computed } from 'vue'
 import { useWebStore } from '@/store'
-import { getBothTime, timeOption, formatTime, formatMS } from '@/common'
+import { getBothTime, timeOption, formatTime, formatMS, formatRangeCondition } from '@/common'
 import { ElMessage } from 'element-plus'
 
-const webStore = useWebStore()
+// 展示的数据
 const showData = reactive({
   logs: [] as any[],
   total: 0,
   page: 1,
   size: 10,
 })
-//当前选择的查询条件
+// 时间索引 用于区分时间跨度
 const timeIndex = ref(2)
+// 性能参数的查询条件
 const range = reactive({
   dnsStart: '',
   dnsEnd: '',
@@ -176,30 +177,20 @@ const range = reactive({
   lStart: '',
   lEnd: '',
 })
-const getReange = (start: string, end: string) => {
-  if (start == '' && end == '') return ''
-  else if (start == '') {
-    return '0_' + parseInt(end)
-  } else if (end == '') {
-    return parseInt(start) + '_10000'
-  } else {
-    return parseInt(start) + '_' + parseInt(end)
-  }
-}
+
+// 查询条件
 let condition = reactive({
-  time: computed(() => {
-    const [startTime, endTime] = getBothTime(timeIndex.value)
-    return startTime + '_' + endTime
-  }),
+  time: computed(() => getBothTime(timeIndex.value).join('_')),
   url: '',
-  dns: computed(() => getReange(range.dnsStart, range.dnsEnd)),
-  fp: computed(() => getReange(range.fpStart, range.fpEnd)),
-  fcp: computed(() => getReange(range.fcpStart, range.fcpEnd)),
-  lcp: computed(() => getReange(range.lcpStart, range.lcpEnd)),
-  dcl: computed(() => getReange(range.dclStart, range.dclEnd)),
-  l: computed(() => getReange(range.lStart, range.lEnd)),
+  dns: computed(() => formatRangeCondition(range.dnsStart, range.dnsEnd)),
+  fp: computed(() => formatRangeCondition(range.fpStart, range.fpEnd)),
+  fcp: computed(() => formatRangeCondition(range.fcpStart, range.fcpEnd)),
+  lcp: computed(() => formatRangeCondition(range.lcpStart, range.lcpEnd)),
+  dcl: computed(() => formatRangeCondition(range.dclStart, range.dclEnd)),
+  l: computed(() => formatRangeCondition(range.lStart, range.lEnd)),
 })
 
+// 请求数据
 const searchData = (page = 1) => {
   reqPer({
     webId: webStore.webId,
@@ -207,11 +198,12 @@ const searchData = (page = 1) => {
     condition,
   }).then(({ code, data }) => {
     if (code == 0) {
+      // 请求成功
       showData.logs = data.logs.map((val) => {
         return {
           ...val,
-          time: formatTime(val.time),
-          dns: formatMS(val.dns),
+          time: formatTime(val.time), // 转换时间戳为时间字符串
+          dns: formatMS(val.dns), // 转化毫秒为字符串
           fp: formatMS(val.fp),
           fcp: formatMS(val.fcp),
           lcp: formatMS(val.lcp),
@@ -222,6 +214,7 @@ const searchData = (page = 1) => {
       showData.total = data.total
       showData.page = page
     } else {
+      // 请求失败
       ElMessage({
         message: '网络异常',
         type: 'warning',
@@ -229,11 +222,13 @@ const searchData = (page = 1) => {
     }
   })
 }
-searchData()
+// 网站id改变时，重新请求数据
+const webStore = useWebStore()
 watch(
   () => webStore.webId,
   () => searchData()
 )
+searchData()
 </script>
 
 <style lang="scss" scoped>
