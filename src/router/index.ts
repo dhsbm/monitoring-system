@@ -53,7 +53,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   const webStore = useWebStore()
-
   // 未登录状态下，尝试根据token获取用户信息，未成功获取则跳至登录页
   if (!userStore.logined) {
     if (to.path != '/login') {
@@ -66,6 +65,8 @@ router.beforeEach((to, from, next) => {
         .catch(() => {
           router.push('/login')
         })
+    } else {
+      next()
     }
   } else {
     // 当前用户尚未创建网站，跳回首页

@@ -89,7 +89,7 @@
           @change-x="changeX"
         ></Line>
         <Line
-          :title-option="`请求时间表`"
+          :title-option="`响应时间表`"
           :x-axis-option="showData.http2X"
           :y-axis-option="yAxis_http2"
           :data="showData.http2"
@@ -181,7 +181,7 @@ const xAxis = getTimeRange(2)
 // 类型维度
 let yAxis_err = ['脚本错误', '静态资源异常', '接口异常', '白屏异常']
 let yAxis_per = ['dns', 'fp', 'fcp', 'lcp', 'dcl', 'l']
-let yAxis_user1 = ['pv', 'pu']
+let yAxis_user1 = ['pv', 'uv']
 let yAxis_user2 = ['用户停留时间']
 let yAxis_http1 = ['成功请求数', '失败请求数']
 let yAxis_http2 = ['响应时间']

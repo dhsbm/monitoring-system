@@ -77,8 +77,9 @@ const loginOrRegister = () => {
         password: password,
       })
       .then(() => {
-        useWebStore().getWebs()
-        router.push('/home')
+        useWebStore()
+          .getWebs()
+          .then(() => router.push('/home'))
       })
       .catch(() => {
         ElMessage({
