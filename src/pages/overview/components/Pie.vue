@@ -1,5 +1,5 @@
 <template>
-  <div ref="dom" style="width: 40rem"></div>
+  <div ref="dom" style="width: 50%"></div>
 </template>
 
 <script setup lang="ts">
@@ -16,6 +16,9 @@ onMounted(() => {
   myChart = echarts.init(dom.value) // 绑定dom元素
   option.series[0].data = formatData(props.data, props.item)
   myChart.setOption(option)
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 })
 
 // 监听props
@@ -33,15 +36,14 @@ watch(
 let option = {
   title: {
     text: '用户浏览器类型',
-    top: '10%',
     left: 'center',
+    top: '10%',
   },
   tooltip: {
     trigger: 'item',
   },
   legend: {
     top: '15%',
-    left: 'center',
   },
   series: [
     {
@@ -72,5 +74,3 @@ function formatData(data: number[], item: string[]) {
   return ans
 }
 </script>
-
-<style scoped lang="scss"></style>

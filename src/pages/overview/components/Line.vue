@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div ref="dom" style="height: 30rem"></div>
+    <div ref="dom" style="height: 30rem; width: 100%"></div>
     <div class="select">
       <div
         v-for="(item, i) in range"
@@ -37,6 +37,9 @@ onMounted(() => {
   myChart = echarts.init(dom.value) // 绑定dom元素
   setSeries()
   myChart.setOption(options)
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 })
 
 // 监听props
@@ -83,7 +86,6 @@ const options = {
 // 设置图表数据
 function setSeries() {
   options.series = GetSeries(props.yAxisOption, props.data)
-  console.log(options.series)
   options.xAxis.data = props.xAxisOption
   options.legend.data = props.yAxisOption
 }
@@ -105,18 +107,19 @@ function GetSeries(yAxisOption: string[], data: number[][]) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
+  align-items: center;
   .select {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 1rem 6rem;
+    margin: 20px 0;
+    height: 30px;
     background-color: #eee;
     outline: 2px solid #eee;
     & > div {
       font-size: 14px;
+      width: 90px;
       box-sizing: border-box;
-      width: 20%;
       line-height: 30px;
       text-align: center;
       border-radius: 5px;

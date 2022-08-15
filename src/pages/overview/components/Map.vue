@@ -1,5 +1,5 @@
 <template>
-  <div id="main" ref="dom"></div>
+  <div ref="dom" style="width: 50%"></div>
 </template>
 
 <script setup lang="ts">
@@ -25,6 +25,9 @@ onMounted(async () => {
   myChart.hideLoading()
   option.series[0].data = formatData(props.area)
   myChart.setOption(option)
+  window.addEventListener('resize', () => {
+    myChart.resize()
+  })
 })
 
 // 监听props
@@ -69,7 +72,7 @@ let option = {
   visualMap: {
     show: true,
     left: 'left',
-    top: 'bottom',
+    top: '80%',
     seriesIndex: [0],
     type: 'piecewise',
     pieces: [
@@ -110,9 +113,3 @@ const formatData = (arr: number[]) => {
   return res
 }
 </script>
-
-<style scoped>
-#main {
-  width: 900px;
-}
-</style>

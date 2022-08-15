@@ -1,60 +1,58 @@
 <template>
   <div class="container">
-    <span class="title">健康状况</span>
-    <div class="mainData">
-      <div class="mainData-line">
-        <div class="mainData-left-line">
-          <Progress
-            :val="score"
-            :width="200"
-            :strokewidth="20"
-            :type="2"
-            :text="'健康状况'"
-            :color="color.total"
-          />
-        </div>
-        <div class="mainData-right-line">
-          <Progress
-            :val="nums.jsErr"
-            :width="130"
-            :strokewidth="10"
-            :type="1"
-            :text="`脚本异常`"
-            :color="color.jsErr"
-            class="item"
-          />
-          <Progress
-            :val="nums.srcErr"
-            :width="130"
-            :strokewidth="10"
-            :type="1"
-            :text="`静态资源异常`"
-            :color="color.srcErr"
-            class="item"
-          />
-          <Progress
-            :val="nums.httpErr"
-            :width="130"
-            :strokewidth="10"
-            :type="1"
-            :text="`网络请求异常`"
-            :color="color.httpErr"
-            class="item"
-          />
-          <Progress
-            :val="nums.whiteErr"
-            :width="130"
-            :strokewidth="10"
-            :type="1"
-            :text="`白屏异常`"
-            :color="color.whiteErr"
-            class="item"
-          />
-        </div>
+    <div class="title">健康状况</div>
+    <div class="heathyData">
+      <div class="heathyData-left">
+        <Progress
+          :val="score"
+          :width="200"
+          :strokewidth="20"
+          :type="2"
+          :text="'健康状况'"
+          :color="color.total"
+        />
+      </div>
+      <div class="heathyData-right">
+        <Progress
+          :val="nums.jsErr"
+          :width="130"
+          :strokewidth="10"
+          :type="1"
+          :text="`脚本异常`"
+          :color="color.jsErr"
+          class="item"
+        />
+        <Progress
+          :val="nums.srcErr"
+          :width="130"
+          :strokewidth="10"
+          :type="1"
+          :text="`静态资源异常`"
+          :color="color.srcErr"
+          class="item"
+        />
+        <Progress
+          :val="nums.httpErr"
+          :width="130"
+          :strokewidth="10"
+          :type="1"
+          :text="`网络请求异常`"
+          :color="color.httpErr"
+          class="item"
+        />
+        <Progress
+          :val="nums.whiteErr"
+          :width="130"
+          :strokewidth="10"
+          :type="1"
+          :text="`白屏异常`"
+          :color="color.whiteErr"
+          class="item"
+        />
       </div>
     </div>
-    <span class="title">核心数据</span>
-    <div class="heathyData">
+    <div class="title">网站运行数据</div>
+    <div class="mainData">
       <div class="line_1">
         <Line
           :title-option="`异常数据表`"
@@ -100,32 +98,34 @@
         ></Line>
       </div>
     </div>
-    <span class="title">用户行为数据</span>
+    <div class="title">用户行为数据</div>
     <div class="userData">
-      <Line
-        :title-option="`用户访问量`"
-        :x-axis-option="showData.user1X"
-        :y-axis-option="yAxis_user1"
-        :data="showData.user1"
-        :kind="2"
-        :index="0"
-        :time-index="showData.user1i"
-        @change-x="changeX"
-      ></Line>
-      <Line
-        :title-option="`用户停留时间`"
-        :x-axis-option="showData.user2X"
-        :y-axis-option="yAxis_user2"
-        :data="showData.user2"
-        :kind="2"
-        :index="1"
-        :time-index="showData.user2i"
-        @change-x="changeX"
-      ></Line>
-    </div>
-    <div class="mapData">
-      <Map :area="showData.area" />
-      <Pie :item="browser_item" :data="showData.browser"></Pie>
+      <div class="line">
+        <Line
+          :title-option="`用户访问量`"
+          :x-axis-option="showData.user1X"
+          :y-axis-option="yAxis_user1"
+          :data="showData.user1"
+          :kind="2"
+          :index="0"
+          :time-index="showData.user1i"
+          @change-x="changeX"
+        ></Line>
+        <Line
+          :title-option="`用户停留时间`"
+          :x-axis-option="showData.user2X"
+          :y-axis-option="yAxis_user2"
+          :data="showData.user2"
+          :kind="2"
+          :index="1"
+          :time-index="showData.user2i"
+          @change-x="changeX"
+        ></Line>
+      </div>
+      <div class="map">
+        <Map :area="showData.area" />
+        <Pie :item="browser_item" :data="showData.browser"></Pie>
+      </div>
     </div>
   </div>
 </template>
@@ -323,74 +323,63 @@ getAllData()
 </script>
 
 <style lang="scss" scoped>
-.title {
-  font-size: 1.5rem;
-  font-family: PingFangSC-Medium, PingFang SC;
-  font-weight: 600;
-  color: #434343;
-  margin: 1rem 0;
-}
 .container {
-  & > div {
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 2.5%;
+  .title {
+    font-size: 1.5rem;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #434343;
     margin: 1rem 0;
   }
-  overflow: hidden;
-  width: 95vw;
-  margin: 0 auto;
-  padding-top: 1rem;
-  .mainData {
-    width: 100%;
-    .mainData-line {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      width: 100%;
-      height: 20rem;
-      background-color: white;
-      border-radius: 1rem;
-      .mainData-left-line {
-        margin-left: 3rem;
-        width: 20rem;
-        border-right: 2px solid $bg_color;
-      }
-      .mainData-right-line {
-        display: flex;
-        justify-content: center;
-        .item {
-          margin-left: 100px;
-        }
-      }
-    }
-  }
   .heathyData {
+    display: flex;
+    height: 20rem;
     background-color: white;
     border-radius: 1rem;
-    padding: 1rem;
-    .line_1 {
-      margin-top: 1rem;
+    .heathyData-left {
+      flex: 1;
       display: flex;
-      justify-content: center;
+      align-items: center;
+      justify-content: space-around;
+      border-right: 2px solid $bg_color;
+    }
+    .heathyData-right {
+      flex: 3;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+  }
+  .mainData {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem 1rem;
+    min-height: 1196px;
+    .line_1 {
+      display: flex;
+      margin-bottom: 2rem;
     }
     .line_2 {
-      margin-top: 1rem;
       display: flex;
-      justify-content: center;
     }
   }
 
   .userData {
     background-color: white;
     border-radius: 1rem;
-    padding: 1rem;
-    display: flex;
-  }
-  .mapData {
-    background-color: white;
-    border-radius: 1rem;
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    height: 700px;
+    padding: 2rem 1rem;
+    min-height: 1200px;
+    .line {
+      display: flex;
+      justify-content: center;
+    }
+    .map {
+      display: flex;
+      height: 700px;
+    }
   }
 }
 </style>
