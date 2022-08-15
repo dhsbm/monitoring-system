@@ -83,6 +83,7 @@ const options = {
 // 设置图表数据
 function setSeries() {
   options.series = GetSeries(props.yAxisOption, props.data)
+  console.log(options.series)
   options.xAxis.data = props.xAxisOption
   options.legend.data = props.yAxisOption
 }

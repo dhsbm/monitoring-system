@@ -47,7 +47,7 @@ let option = {
   tooltip: {
     trigger: 'item',
     formatter: function (params: any) {
-      const displayStr = params.name + ': ' + params.value + ' 万人'
+      const displayStr = params.name + ': ' + params.value + ' 人'
       return displayStr
     },
   },
@@ -73,11 +73,11 @@ let option = {
     seriesIndex: [0],
     type: 'piecewise',
     pieces: [
-      { min: 80, color: 'rgb(254,57,101)' },
-      { min: 41, max: 80, color: 'rgb(252,157,154)' },
-      { min: 21, max: 40, color: 'rgb(249,205,173)' },
-      { min: 6, max: 20, color: 'rgb(200,200,169)' },
-      { min: 0, max: 5, color: 'rgb(131,175,155)' },
+      { min: 1000, color: 'rgb(254,57,101)' },
+      { min: 300, max: 1000, color: 'rgb(252,157,154)' },
+      { min: 100, max: 300, color: 'rgb(249,205,173)' },
+      { min: 10, max: 100, color: 'rgb(200,200,169)' },
+      { min: 0, max: 10, color: 'rgb(131,175,155)' },
     ],
     textStyle: {
       color: '#000000',

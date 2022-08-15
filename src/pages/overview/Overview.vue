@@ -309,6 +309,13 @@ watch(
       showData.http1i =
       showData.http2i =
         2
+    showData.errX =
+      showData.perX =
+      showData.user1X =
+      showData.user2X =
+      showData.http1X =
+      showData.http2X =
+        xAxis
     getAllData()
   }
 )
