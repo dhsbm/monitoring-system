@@ -299,7 +299,19 @@ const getAllData = () => {
 
 // 网站id改变，重新请求数据
 const webStore = useWebStore()
-watch(() => webStore.webId, getAllData)
+watch(
+  () => webStore.webId,
+  () => {
+    showData.erri =
+      showData.peri =
+      showData.user1i =
+      showData.user2i =
+      showData.http1i =
+      showData.http2i =
+        2
+    getAllData()
+  }
+)
 getAllData()
 </script>
 

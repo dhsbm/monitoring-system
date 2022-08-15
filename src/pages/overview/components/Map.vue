@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { init, registerMap, EChartsType } from 'echarts'
+import echarts from './echarts'
 import { Area } from '@/interface'
 import { reqMap } from '@/api'
 
@@ -14,14 +14,14 @@ const props = defineProps<{
 
 const dom = ref() // 通过ref获取dom对象
 const mapName = 'china'
-let myChart: EChartsType
+let myChart: echarts.EChartsType
 let showMap = false // 未注册地图前，不展示
 onMounted(async () => {
-  myChart = init(dom.value) // 绑定dom元素
+  myChart = echarts.init(dom.value) // 绑定dom元素
   myChart.showLoading()
   const response = await reqMap() // 异步请求中国地图数据
   showMap = true // 地图请求完毕，可展示
-  registerMap(mapName, response.data)
+  echarts.registerMap(mapName, response.data)
   myChart.hideLoading()
   option.series[0].data = formatData(props.area)
   myChart.setOption(option)
@@ -53,9 +53,10 @@ let option = {
   },
   geo: {
     map: mapName,
-    label: {
-      emphasis: {
-        show: false,
+    emphasis: {
+      label: false,
+      itemStyle: {
+        areaColor: '#3f6ed1',
       },
     },
     zoom: '1.3',
@@ -63,9 +64,6 @@ let option = {
     itemStyle: {
       areaColor: 'rgba(233, 236, 240)',
       borderColor: '#666666',
-      emphasis: {
-        areaColor: '#3f6ed1',
-      },
     },
   },
   visualMap: {
@@ -76,9 +74,9 @@ let option = {
     type: 'piecewise',
     pieces: [
       { min: 80, color: 'rgb(254,57,101)' },
-      { min: 40, max: 79, color: 'rgb(252,157,154)' },
-      { min: 20, max: 39, color: 'rgb(249,205,173)' },
-      { min: 6, max: 19, color: 'rgb(200,200,169)' },
+      { min: 41, max: 80, color: 'rgb(252,157,154)' },
+      { min: 21, max: 40, color: 'rgb(249,205,173)' },
+      { min: 6, max: 20, color: 'rgb(200,200,169)' },
       { min: 0, max: 5, color: 'rgb(131,175,155)' },
     ],
     textStyle: {
@@ -99,12 +97,17 @@ let option = {
 
 // 将数字转化为地区中文
 const formatData = (arr: number[]) => {
-  return arr.map((v: number, i: number) => {
+  let res = arr.map((v: number, i: number) => {
     return {
       name: Area[i],
       value: v,
     }
   })
+  res.push({
+    name: '南海诸岛',
+    value: arr[Area.海南],
+  })
+  return res
 }
 </script>
 

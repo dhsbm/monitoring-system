@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { init } from 'echarts'
+import echarts from './echarts'
 import { watch, ref, onMounted } from 'vue'
 const props = defineProps<{
   titleOption: string
@@ -34,7 +34,7 @@ const range = ['最近4小时', '最近1天', '最近7天', '最近14天', '最�
 const dom = ref() // 通过ref获取dom对象
 let myChart: any
 onMounted(() => {
-  myChart = init(dom.value) // 绑定dom元素
+  myChart = echarts.init(dom.value) // 绑定dom元素
   setSeries()
   myChart.setOption(options)
 })

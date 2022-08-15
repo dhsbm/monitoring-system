@@ -94,3 +94,17 @@ settings.json 个人设置
   "path-intellisense.autoSlashAfterDirectory": true,
 }
 ```
+## 代码介绍
+- main.ts：项目入口文件
+- App.ts：入口组件，定义全局样式
+- src/api：封装网络请求的发送
+- src/assets：静态资源
+- src/common：各组件通用的公共函数
+- src/interface：定义通用的类型
+- src/layout：页面整体布局
+- src/mock：Mock虚拟服务器
+- src/pages：各页面组件及功能
+- src/router：定义项目路由
+- src/store：定义状态仓库
+- public：无需打包的静态资源
+- dist：代码的打包目录

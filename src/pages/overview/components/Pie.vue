@@ -3,18 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { init, EChartsType } from 'echarts'
 import { watch, ref, onMounted } from 'vue'
-
+import echarts from './echarts'
 const props = defineProps<{
   item: string[]
   data: number[]
 }>()
 
 const dom = ref() // 通过ref获取dom对象
-let myChart: EChartsType
+let myChart: echarts.ECharts
 onMounted(() => {
-  myChart = init(dom.value) // 绑定dom元素
+  myChart = echarts.init(dom.value) // 绑定dom元素
   option.series[0].data = formatData(props.data, props.item)
   myChart.setOption(option)
 })
@@ -24,7 +23,7 @@ watch(
   () => props.data,
   (now) => {
     if (now.length) {
-      option.series[0].data = formatData(props.data, props.item)
+      option.series[0]!.data = formatData(props.data, props.item)
       myChart.setOption(option)
     }
   }
