@@ -5,7 +5,6 @@ import NProgress from 'nprogress'
 // 引入进度条样式
 import 'nprogress/nprogress.css'
 
-// 使用自定义配置新建一个 axios 实例
 const ajax = axios.create({
   baseURL: 'http://47.100.57.184:3333/', // 基础路径
   timeout: 6000, // 请求超时时间

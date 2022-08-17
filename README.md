@@ -1,100 +1,46 @@
-## 开发须知
+# 介绍
+本项目为第四届字节跳动作业项目，实现了网站健康情况的监控，自动收集、上报、存储网站关键数据，主要包括以下4个方面
 
-**功能开发不要在主分支上推送，拉去后新建分支，推送前拉取代码，处理冲突！！**
+异常报错监控：脚本异常、资源异常、接口异常、白屏异常  
+页面性能监控：如 DNS、FP、FCP、Dom Ready 等  
+用户行为监控：PV/UV、页面停留时间等  
+网络请求监控：请求路径、成功率、返回信息等  
 
-## 预备工作
+详情请登录我们的[监控系统](http://47.100.57.184:9000/)查看
 
-全局安装 commitizen 
+# 系统使用
+
+## 注册网站
+登录[监控系统](http://47.100.57.184:9000/)首页，创建网站实例，获取网站ID
+
+## 下载 SDK
+在用户菜单选项中下载[监控 SDK](https://gitee.com/du-hao-111/website-monitoring-script)
+![](./img/user.png)
+
+## 导入 SDK
+在项目中导入监控脚本
+```html
+<script src="/monitoring.js"></script>
 ```
-npm install -g commitizen@4.2.4
+
+## 配置网站ID
+调用 `setOption` 方法，传入一个配置对象：
+* id: 网站ID 
+* showDebug: 上报日志的同时是否在控制台打印(用于测试)
+
+下面是默认选项
+```html
+<script>
+  setOption({ id: 1018, showDebug: true })
+</script>
 ```
 
-VScode插件，有其他同功能插件可选择性安装：
-* ESLint
-* ESLint Chinese Rules：规范中文提示
-* Prettier - Code …… ：自动格式化
-* Volar
-* Path Intellisense：路径解析
-* Auto Import：自动导入
-* koroFileHeader：函数注释
-* Code Spell Checker：拼写检查
+网站ID 在下图位置
+![](./img/id.png)
 
-
-settings.json 个人设置
-```json
-{
-  // 添加 vue 支持
-  "eslint.validate": ["javascript", "html", "vue", "typescript"],
-  "eslint.options": {
-    "extensions": [".js", ".vue", ".ts"]
-  },
-  // 每次保存的时候将代码按eslint格式进行修复
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": false
-  },
-
-    /*  prettier的配置 */
-  "prettier.printWidth": 120, // 超过最大值换行
-  "prettier.tabWidth": 2, // 缩进字节数
-  "prettier.useTabs": false, // 缩进不使用tab，使用空格
-  "prettier.semi": false, // 句尾添加分号
-  "prettier.singleQuote": true, // 使用单引号代替双引号
-  "prettier.proseWrap": "preserve", //  (x) => {} 箭头函数参数只有一个时是否要有小括号。avoid：省略括号
-  "prettier.bracketSpacing": true, // 在对象，数组括号与文字之间加空格 "{ foo: bar }"
-  "prettier.endOfLine": "auto", // 结尾是 \n \r \n\r auto
-  "prettier.htmlWhitespaceSensitivity": "ignore", // 指定HTML文件的全局空白区域敏感度。
-  "prettier.ignorePath": ".prettierignore", // 不使用prettier格式化的文件填写在项目的.prettierignore文件中
-  "prettier.jsxBracketSameLine": false, // 在jsx中把'>' 是否单独放一行
-  "prettier.jsxSingleQuote": false, // 在jsx中使用单引号代替双引号
-  "prettier.requireConfig": false, // Require a 'prettierconfig' to format prettier
-  "prettier.trailingComma": "es5", // 在对象或数组最后一个元素后面是否加逗号（以ES5标准）
-
-  // 默认格式化程序
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.quickSuggestions": { "strings": true },
-    "editor.suggest.insertMode": "replace",
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-
-  // 自动导入
-  "autoimport.filesToScan": "**/*.{vue,ts,tsx,js}",
-  "autoimport.showNotifications": true,
-  // 路径解析
-  "path-intellisense.mappings": {
-    "components": "${workspaceRoot}/src/components",
-    "@": "${workspaceRoot}/src"
-  },
-  "path-intellisense.extensionOnImport": true,
-  "path-intellisense.autoTriggerNextSuggestion": true,
-  "path-intellisense.showHiddenFiles": true,
-  "path-intellisense.autoSlashAfterDirectory": true,
-}
-```
-## 代码介绍
+## 配置完成
+只需完成以上配置，就可以在监控系统实时了解线上应用的健康情况
+# 仓库结构
 - main.ts：项目入口文件
 - App.ts：入口组件，定义全局样式
 - src/api：封装网络请求的发送
@@ -108,3 +54,60 @@ settings.json 个人设置
 - src/store：定义状态仓库
 - public：无需打包的静态资源
 - dist：代码的打包目录
+
+# 开发流程
+## 克隆本仓库
+```shell
+git clone https://gitee.com/du-hao-111/monitoring-system
+```
+
+## 安装依赖
+```shell
+pnpm i
+```
+
+## 启动项目
+```shell
+pnpm run dev
+```
+
+## 项目打包
+```shell
+pnpm run dev build
+```
+
+# 开发须知
+## 代码规范
+本仓库配置了eslint 与 commitlint，提交代码需要符合规范，具体可以访问[这篇掘金](https://juejin.cn/post/7091276495972204580)查看
+
+## 后端服务
+本项目设置了后端[仓库](https://gitee.com/du-hao-111/monitoring-system-backend)，也可以选择开启Mock
+
+```ts
+// src/main.ts
+import './mock/mockServe' // 启动Mock服务器
+```
+```ts
+// src/api/ajax.ts
+const ajax = axios.create({
+  baseURL: '/mock', // 基础路径
+  timeout: 6000, // 请求超时时间
+})
+```
+
+## 生产环境
+为了提高性能，本项目采取了一些生产环境下的优化，开发期间可以做出以下修改
+
+```ts
+// src/main.ts
+import 'element-plus/dist/index.css' // 开发环境下解开
+// window.addEventListener('load', () => {
+//   reqCSS().then((res) => {
+//     const link = document.createElement('style')
+//     link.innerText = res.data
+//     document.head.insertBefore(link, document.head.firstChild)
+//   })
+//   // 预加载地图数据
+//   reqMap()
+// })
+```

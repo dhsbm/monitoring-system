@@ -1,4 +1,3 @@
-import mockAjax from './mockAjax'
 import ajax from './ajax'
 import { reqLogin, reqRegister, reqGetInfo, LoginParams, RegisterParams } from './user'
 import { reqWebList, reqAddWeb, reqEditWeb, reqDeleteWeb, AddParams, EditParams } from './web'
@@ -7,7 +6,6 @@ import { reqMap, reqCSS } from './static'
 
 export {
   ajax,
-  mockAjax,
   reqLogin,
   reqRegister,
   reqGetInfo,
