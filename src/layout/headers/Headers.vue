@@ -23,6 +23,7 @@
         <div class="name">{{ userStore.name }}</div>
         <div class="item" @click="router.push('/login')">切换用户</div>
         <div class="item" @click="download">下载脚本</div>
+        <div class="item" @click="go">使用帮助</div>
       </div>
       <svg
         t="1659962705300"
@@ -64,6 +65,9 @@ a.href = '/monitoring.js'
 a.download = 'monitoring.js'
 const download = () => {
   a.click()
+}
+const go = () => {
+  window.open('https://gitee.com/du-hao-111/monitoring-system/blob/master/README.md')
 }
 </script>
 
