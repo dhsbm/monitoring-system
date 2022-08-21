@@ -11,7 +11,11 @@ const app = createApp(App)
 
 app.use(router).use(createPinia()).mount('#app')
 // 生产环境下：异步下载element-plus.css
-window.addEventListener('load', () => {
+
+new PerformanceObserver(function (
+  entryList: PerformanceObserverEntryList,
+  observe: PerformanceObserver
+) {
   reqCSS().then((res) => {
     const link = document.createElement('style')
     link.innerText = res.data
@@ -19,4 +23,5 @@ window.addEventListener('load', () => {
   })
   // 预加载地图数据
   reqMap()
-})
+  observe.disconnect()
+}).observe({ entryTypes: ['largest-contentful-paint'] })

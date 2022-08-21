@@ -2,14 +2,7 @@
   <div class="headers">
     <div class="title">网站监控系统</div>
     <div v-show="route.path != '/home'" class="select">
-      <el-select v-model="webStore.webId" class="m-2">
-        <el-option
-          v-for="item in webStore.webList"
-          :key="item.webId"
-          :label="item.title"
-          :value="item.webId"
-        />
-      </el-select>
+      <Select></Select>
     </div>
     <div class="fill"></div>
     <div class="link"><router-link to="home">首页</router-link></div>
@@ -51,10 +44,12 @@
 </template>
 
 <script setup lang="ts">
-import { useWebStore, useUserStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/store'
+import { defineAsyncComponent } from 'vue'
 
-const webStore = useWebStore()
+const Select = defineAsyncComponent(() => import('./Select.vue'))
+
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()

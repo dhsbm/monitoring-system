@@ -9,9 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import WebList from './components/WebList.vue'
-import ModalWeb from './components/ModalWeb.vue'
+import { defineAsyncComponent } from 'vue'
 import { switchShow } from './components/modal'
+const WebList = defineAsyncComponent(() => import('./components/WebList.vue'))
+const ModalWeb = defineAsyncComponent(() => import('./components/ModalWeb.vue'))
 </script>
 
 <style lang="scss" scoped>
